@@ -1,0 +1,15 @@
+# use the simple server factory if you only want to run on a single port
+server:
+  type: simple
+  connector:
+    type: http
+    port: 8080
+
+database:
+  driverClass: org.postgresql.Driver
+  url: ${AUTH_DB_URL}
+  user: postgres
+  password: ${DATABASE_PASSWORD}
+
+logging:
+  level: INFO
