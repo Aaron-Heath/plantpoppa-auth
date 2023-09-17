@@ -1,15 +1,19 @@
+---
+logging:
+  level: INFO
+  loggers:
+    com.aheath: DEBUG
+
 # use the simple server factory if you only want to run on a single port
 server:
   type: simple
   connector:
     type: http
-    port: 8080
+    port: 8443
 
+# Database Settings
 database:
   driverClass: org.postgresql.Driver
-  url: ${AUTH_DB_URL}
+  url: jdbc:postgresql://localhost:5432/plantpoppa
   user: postgres
   password: ${DATABASE_PASSWORD}
-
-logging:
-  level: INFO
