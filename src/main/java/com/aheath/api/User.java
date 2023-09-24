@@ -11,9 +11,10 @@ public class User implements Principal {
     private String pw_hash;
     private String phone;
     private String zip;
+    private String salt;
 
     // Full constructor
-    public User(int user_id, String email, String pw_hash, String firstname, String lastname, String phone, String zip) {
+    public User(int user_id, String email, String pw_hash, String firstname, String lastname, String phone, String zip, String salt) {
         this.user_id = user_id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -21,18 +22,20 @@ public class User implements Principal {
         this.pw_hash = pw_hash;
         this.phone = phone;
         this.zip = zip;
+        this.salt = salt;
     }
 
     // Constructor without id
-    public User(String email, String pw_hash, String firstname, String lastname, String phone, String zip) {
+    public User(String email, String pw_hash, String firstname, String lastname, String phone, String zip, String salt) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.pw_hash = pw_hash;
         this.phone = phone;
         this.zip = zip;
+        this.salt = salt;
     }
-    //Constructor without pw_hash
+    //Constructor without pw_hash and without salt
     public User(int user_id, String email, String firstname, String lastname, String phone, String zip) {
         this.user_id = user_id;
         this.firstname = firstname;
@@ -42,7 +45,7 @@ public class User implements Principal {
         this.zip = zip;
     }
 
-    //Constructor with email/password only
+    //Constructor with email/password
     public User(String email, String pw_hash) {
         this.email = email;
         this.pw_hash = pw_hash;
@@ -115,5 +118,13 @@ public class User implements Principal {
 
     public void setZip(String zip) {
         this.zip = zip;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }
