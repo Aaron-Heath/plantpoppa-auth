@@ -47,7 +47,7 @@ public class UserResource {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
-        user.setSalt(Arrays.toString(salt));
+        user.setSalt(salt);
 
         KeySpec spec = new PBEKeySpec(user.getPw_hash().toCharArray(),salt,65536,128);
         SecretKeyFactory factory = null;
