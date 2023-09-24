@@ -45,11 +45,10 @@ public class User implements Principal {
         this.zip = zip;
     }
 
-    //Constructor with email/password/salt only
-    public User(String email, String pw_hash, String salt) {
+    //Constructor with email/password
+    public User(String email, String pw_hash) {
         this.email = email;
         this.pw_hash = pw_hash;
-        this.salt = salt;
     }
     // Empty Constructor
     public User() {
