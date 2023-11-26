@@ -1,6 +1,5 @@
 package com.aheath.resources;
 
-
 import com.aheath.api.User;
 import com.aheath.db.UserDAO;
 import jakarta.ws.rs.*;
@@ -14,6 +13,7 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 @Path("/user")
@@ -42,12 +42,19 @@ public class UserResource {
     @POST
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
-    public User createUser(User user) {
-        //Generate Random Salt
+    public int createUser(User user) {
+        // TODO: Re-write create user creation using Base64
+        //https://stackoverflow.com/questions/2860943/how-can-i-hash-a-password-in-java
+        //TODO: Review Generate Random Salt
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
-        user.setSalt(salt);
+        //TODO: Convert salt to string
+        Base64.Encoder encoder = Base64.getEncoder();
+//        System.out.printf("salt: %s%n", encoder.encodeToString(salt));
+
+        //TODO: set salt
+        user.setSalt(encoder.encodeToString(salt));
 
         KeySpec spec = new PBEKeySpec(user.getPw_hash().toCharArray(),salt,65536,128);
         SecretKeyFactory factory = null;
@@ -61,8 +68,16 @@ public class UserResource {
         try {
             byte[] hash = factory.generateSecret(spec).getEncoded();
             //TODO: DELETE HASH RETURN
-            user.setPw_hash(Arrays.toString(hash));
-            return user;
+            user.setPw_hash(encoder.encodeToString(hash));
+            return userDAO.createUser(
+                    user.getFirstname(),
+                    user.getLastname(),
+                    user.getEmail(),
+                    user.getPw_hash(),
+                    user.getPhone(),
+                    user.getZip(),
+                    user.getSalt()
+            );
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }

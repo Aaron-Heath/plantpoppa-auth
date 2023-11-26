@@ -11,10 +11,10 @@ public class User implements Principal {
     private String pw_hash;
     private String phone;
     private String zip;
-    private byte[] salt;
+    private String salt;
 
     // Full constructor
-    public User(int user_id, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
+    public User(int user_id, String email, String pw_hash, String firstname, String lastname, String phone, String zip, String salt) {
         this.user_id = user_id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -26,7 +26,7 @@ public class User implements Principal {
     }
 
     // Constructor without id
-    public User(String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
+    public User(String email, String pw_hash, String firstname, String lastname, String phone, String zip, String salt) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -120,11 +120,11 @@ public class User implements Principal {
         this.zip = zip;
     }
 
-    public byte[] getSalt() {
+    public String getSalt() {
         return salt;
     }
 
-    public void setSalt(byte[] salt) {
+    public void setSalt(String salt) {
         this.salt = salt;
     }
 }
