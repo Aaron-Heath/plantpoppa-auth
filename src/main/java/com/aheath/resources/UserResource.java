@@ -63,30 +63,24 @@ public class UserResource {
         user.setSalt(this.passwordEncoder.generateSalt());
 
 //        Encrypt Password
-        KeySpec spec = new PBEKeySpec(user.getPw_hash().toCharArray(),user.getSalt(),65536,128);
-        SecretKeyFactory factory = null;
-        try {
-            factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        user.setPw_hash(this.passwordEncoder.encryptPassword(user.getPw_hash(), user.getSalt()));
+//        KeySpec spec = new PBEKeySpec(user.getPw_hash().toCharArray(),user.getSalt(),65536,128);
+//        SecretKeyFactory factory = null;
+//        try {
+//            factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+//        } catch (NoSuchAlgorithmException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        try {
-            byte[] hash = factory.generateSecret(spec).getEncoded();
-            //TODO: DELETE HASH RETURN
-            user.setPw_hash(encoder.encodeToString(hash));
-            return userDAO.createUser(
-                    user.getFirstname(),
-                    user.getLastname(),
-                    user.getEmail(),
-                    user.getPw_hash(),
-                    user.getPhone(),
-                    user.getZip(),
-                    user.getSalt()
-            );
-        } catch (InvalidKeySpecException e) {
-            throw new RuntimeException(e);
-        }
+        return userDAO.createUser(
+                user.getFirstname(),
+                user.getLastname(),
+                user.getEmail(),
+                user.getPw_hash(),
+                user.getPhone(),
+                user.getZip(),
+                user.getSalt()
+        );
     }
 
 }

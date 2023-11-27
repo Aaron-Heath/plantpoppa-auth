@@ -1,8 +1,11 @@
 package com.aheath.security;
 
 import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.Base64;
 
 public class PasswordEncoder {
@@ -39,5 +42,21 @@ public class PasswordEncoder {
         byte[] salt = new byte[16];
         this.random.nextBytes(salt);
         return salt;
+    }
+
+    /**
+     *
+     * @param password string input by user either creating their account or password, or authenticating.
+     * @param salt byte array either pulled from db when authenticating or randomly generated when creating or updateing password.
+     * @return encoded string of password for storage or comparison.
+     */
+    public String encryptPassword(String password, byte[] salt) {
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, this.iterationCount, this.keyLength);
+        try {
+            byte[] hash = this.factory.generateSecret(spec).getEncoded();
+            return this.encoder.encodeToString(hash);
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
