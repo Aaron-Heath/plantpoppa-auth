@@ -30,6 +30,9 @@ public interface UserDAO {
     @SqlQuery("SELECT salt FROM user_account WHERE email = :email")
     String getSalt(@Bind("email") String email);
 
+    @SqlQuery("SELECT * FROM user_account WHERE email = :email")
+    User getUserByEmail(@Bind("email") String email);
+
 
     @SqlQuery("SELECT user_id, firstname, lastname, email, phone, zip FROM user_account WHERE email= :email pw_hash = :pw_hash AND salt = :salt")
     User checkCredentials(@Bind("email") String email, @Bind("pw_hash") String pw_hash, @Bind("salt") String salt);
