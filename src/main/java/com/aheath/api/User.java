@@ -11,10 +11,10 @@ public class User implements Principal {
     private String pw_hash;
     private String phone;
     private String zip;
-    private String salt;
+    private byte[] salt;
 
     // Full constructor
-    public User(int user_id, String email, String pw_hash, String firstname, String lastname, String phone, String zip, String salt) {
+    public User(int user_id, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
         this.user_id = user_id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -26,7 +26,7 @@ public class User implements Principal {
     }
 
     // Constructor without id
-    public User(String email, String pw_hash, String firstname, String lastname, String phone, String zip, String salt) {
+    public User(String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -63,6 +63,8 @@ public class User implements Principal {
     public boolean implies(Subject subject) {
         return Principal.super.implies(subject);
     }
+
+
 
     public int getUser_id() {
         return user_id;
@@ -120,11 +122,11 @@ public class User implements Principal {
         this.zip = zip;
     }
 
-    public String getSalt() {
+    public byte[] getSalt() {
         return salt;
     }
 
-    public void setSalt(String salt) {
+    public void setSalt(byte[] salt) {
         this.salt = salt;
     }
 }
