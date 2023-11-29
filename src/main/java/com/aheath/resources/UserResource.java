@@ -6,10 +6,12 @@ import com.aheath.security.AuthenticationService;
 import com.aheath.security.PasswordEncoder;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.checkerframework.checker.units.qual.C;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import javax.print.attribute.standard.Media;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -38,9 +40,6 @@ public class UserResource {
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
     public Optional<User> authenticateUser(User user) {
-        // USER SHOULD ONLY HAVE EMAIL and PW
-
-        // get salt from user if exists.
 
         User queriedUser = this.userDAO.getUserByEmail(user.getEmail());
         boolean validated = authenticator.authenticateUser(user.getPw_hash(), queriedUser.getPw_hash(), queriedUser.getSalt());
@@ -85,5 +84,15 @@ public class UserResource {
                 user.getSalt()
         );
     }
+
+    //TODO: This cannot be completed until a token is generated, stored, and passed.
+//    @PUT
+//    @Path("/chngpw")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public int changePassword(User user, String password2) {
+//        // Validate correct previous password was sent
+//        return 0;
+//    }
+
 
 }
