@@ -36,15 +36,8 @@ public interface UserDAO {
 
     @SqlQuery("SELECT user_id, firstname, lastname, email, phone, zip FROM user_account WHERE email= :email pw_hash = :pw_hash AND salt = :salt")
     User checkCredentials(@Bind("email") String email, @Bind("pw_hash") String pw_hash, @Bind("salt") String salt);
-//
-//    public default User authenticate(String email, String pw_hash) {
-//        User user = null;
-//
-//        // Get and store salt from db
-//        String salt = this.getSalt(email);
-//
-//
-//
-//        return user;
-//    }
+
+    // update password using user_id
+    @SqlUpdate("UPDATE user_account SET password = :pw_hash, salt = :salt WHERE user_id = :user_id")
+    int changePassword(@Bind("pw_hash") String pw_hash, @Bind("salt") byte[] salt, @Bind("user_id") int user_id);
 }
