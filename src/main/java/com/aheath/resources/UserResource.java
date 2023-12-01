@@ -40,7 +40,7 @@ public class UserResource {
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
     public Optional<User> authenticateUser(User user) {
-
+        //
         User queriedUser = this.userDAO.getUserByEmail(user.getEmail());
         boolean validated = authenticator.authenticateUser(user.getPw_hash(), queriedUser.getPw_hash(), queriedUser.getSalt());
 

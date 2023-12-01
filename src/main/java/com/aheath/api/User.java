@@ -1,6 +1,5 @@
 package com.aheath.api;
 
-import javax.security.auth.Subject;
 import java.security.Principal;
 
 public class User implements Principal {
@@ -57,11 +56,6 @@ public class User implements Principal {
     @Override
     public String getName() {
         return this.getFirstname() + " " + this.getLastname();
-    }
-
-    @Override
-    public boolean implies(Subject subject) {
-        return Principal.super.implies(subject);
     }
 
 
@@ -129,4 +123,5 @@ public class User implements Principal {
     public void setSalt(byte[] salt) {
         this.salt = salt;
     }
+
 }
