@@ -29,7 +29,7 @@ public class AuthenticationService {
         }
     }
     //    Takes a successfully authenticated user and returns the user and session
-    private Session createSession(User user) {
+    public Session createSession(User user) {
         //  Generate token
         // https://stackoverflow.com/questions/13992972/how-to-create-a-authentication-token-using-java
         byte[] randomBytes = new byte[24];
