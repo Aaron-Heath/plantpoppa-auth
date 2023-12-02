@@ -47,14 +47,7 @@ public class UserResource {
         boolean validated = authenticator.authenticateUser(user.getPw_hash(), queriedUser.getPw_hash(), queriedUser.getSalt());
 
         if(validated) {
-            return Optional.of(new User(
-                    queriedUser.getUser_id(),
-                    queriedUser.getFirstname(),
-                    queriedUser.getLastname(),
-                    queriedUser.getEmail(),
-                    queriedUser.getPhone(),
-                    queriedUser.getZip()
-            ));
+            return Optional.of(queriedUser);
         }
         return Optional.empty();
 
