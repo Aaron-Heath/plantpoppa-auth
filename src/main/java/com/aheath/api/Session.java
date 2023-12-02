@@ -1,14 +1,14 @@
 package com.aheath.api;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 // Session stores session specific data. For storage and validation server-side.
 public class Session {
     private int user_id;
     private String token;
-    private Date expiration;
+    private LocalDate expiration;
 
-    public Session(int user_id, String token, Date expiration) {
+    public Session(int user_id, String token, LocalDate expiration) {
         this.user_id = user_id;
         this.token = token;
         this.expiration = expiration;
@@ -34,11 +34,11 @@ public class Session {
         this.token = token;
     }
 
-    public Date getExpiration() {
+    public LocalDate getExpiration() {
         return expiration;
     }
 
-    public void setExpiration(Date expiration) {
+    public void setExpiration(LocalDate expiration) {
         this.expiration = expiration;
     }
 }

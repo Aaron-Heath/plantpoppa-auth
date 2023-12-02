@@ -6,6 +6,7 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @RegisterBeanMapper(Session.class)
@@ -18,7 +19,7 @@ public interface SessionDAO {
     @SqlUpdate("INSERT INTO session (user_id, token, expiration)" +
             "VALUES (:user_id, :token, :expiration" +
             "RETURNING token")
-    String createSession(@Bind("user_id") int user_id, @Bind("token") String token, @Bind("expiration") Date expiration);
+    String createSession(@Bind("user_id") int user_id, @Bind("token") String token, @Bind("expiration") LocalDate expiration);
 
 
 
