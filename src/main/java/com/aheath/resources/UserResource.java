@@ -1,5 +1,6 @@
 package com.aheath.resources;
 
+import com.aheath.api.Session;
 import com.aheath.api.User;
 import com.aheath.db.SessionDAO;
 import com.aheath.db.UserDAO;
@@ -41,13 +42,15 @@ public class UserResource {
     @POST
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Optional<User> authenticateUser(User user) {
+    public Optional<Session> authenticateUser(User user) {
         //
         User queriedUser = this.userDAO.getUserByEmail(user.getEmail());
         boolean validated = authenticator.authenticateUser(user.getPw_hash(), queriedUser.getPw_hash(), queriedUser.getSalt());
 
         if(validated) {
-            return Optional.of(queriedUser);
+            // Create session
+            Session session = authenticator.createSession(queriedUser);
+            return Optional.of(session);
         }
         return Optional.empty();
 

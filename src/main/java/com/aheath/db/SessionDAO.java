@@ -16,10 +16,8 @@ public interface SessionDAO {
     Session getSession();
 
     // Create session
-    @SqlUpdate("INSERT INTO session (user_id, token, expiration)" +
-            "VALUES (:user_id, :token, :expiration" +
-            "RETURNING token")
-    String createSession(@Bind("user_id") int user_id, @Bind("token") String token, @Bind("expiration") LocalDate expiration);
+    @SqlUpdate("INSERT INTO session (user_id, token, expiration) VALUES (:user_id, :token, :expiration)")
+    void createSession(@Bind("user_id") int user_id, @Bind("token") String token, @Bind("expiration") LocalDate expiration);
 
 
 
