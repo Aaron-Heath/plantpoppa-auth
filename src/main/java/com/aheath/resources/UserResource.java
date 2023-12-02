@@ -1,6 +1,7 @@
 package com.aheath.resources;
 
 import com.aheath.api.User;
+import com.aheath.db.SessionDAO;
 import com.aheath.db.UserDAO;
 import com.aheath.security.AuthenticationService;
 import com.aheath.security.PasswordEncoder;
@@ -24,10 +25,11 @@ import java.util.Optional;
 public class UserResource {
     private final UserDAO userDAO;
     private PasswordEncoder passwordEncoder;
-    private AuthenticationService authenticator = new AuthenticationService();
+    private AuthenticationService authenticator;
 
     public UserResource(Jdbi jdbi) {
         this.userDAO = jdbi.onDemand(UserDAO.class);
+        this.authenticator = new AuthenticationService(jdbi);
     }
 
 

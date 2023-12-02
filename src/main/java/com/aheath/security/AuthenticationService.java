@@ -1,10 +1,20 @@
 package com.aheath.security;
 
+import com.aheath.api.Session;
+import com.aheath.db.SessionDAO;
+import org.jdbi.v3.core.Jdbi;
+
 import java.security.NoSuchAlgorithmException;
 
 public class AuthenticationService {
+
     // Store password encoder
     private final PasswordEncoder passwordEncoder;
+    private final SessionDAO sessionDAO;
+
+    public AuthenticationService(Jdbi jdbi) {
+        this.sessionDAO = jdbi.onDemand(SessionDAO.class);
+    }
 
     {
         try {
@@ -13,6 +23,18 @@ public class AuthenticationService {
             throw new RuntimeException(e);
         }
     }
+    //    Takes a successfully authenticated user and returns a session
+    private Session createSession(int user_id) {
+        //Generate token
+
+        // Generate expiration date
+
+        // Call SessionDAO.createSession();
+
+
+        return null;
+    }
+
 
     // Compare user provided credentials with those pulled from database
     public boolean authenticateUser(String passwordInput, final String validPassword, final byte[] validSalt) {
