@@ -22,6 +22,5 @@ public class AuthenticationService {
 
         // If input password validates to the same result, returns true. Otherwise, returns false.
         return encryptedInput.equals(validPassword);
-
     }
 }
