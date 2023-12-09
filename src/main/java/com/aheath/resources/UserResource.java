@@ -3,6 +3,7 @@ package com.aheath.resources;
 import com.aheath.models.Session;
 import com.aheath.models.User;
 import com.aheath.dao.UserDAO;
+import com.aheath.models.UserDto;
 import com.aheath.security.AuthenticationService;
 import com.aheath.security.PasswordEncoder;
 import jakarta.ws.rs.*;
@@ -34,10 +35,10 @@ public class UserResource {
     @POST
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Optional<Session> authenticateUser(User user) {
+    public Optional<Session> authenticateUser(UserDto userDto) {
 
-        User queriedUser = this.userDAO.getUserByEmail(user.getEmail());
-        boolean validated = authenticator.authenticateUser(user.getPw_hash(), queriedUser.getPw_hash(), queriedUser.getSalt());
+        User queriedUser = this.userDAO.getUserByEmail(userDto.getEmail());
+        boolean validated = authenticator.authenticateUser(userDto.getPassword(), queriedUser.getPw_hash(), queriedUser.getSalt());
 
         if(validated) {
             // Create session

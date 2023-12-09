@@ -26,15 +26,9 @@ public class UserDto {
         this.zip = zip;
     }
 
-//    public UserDto(User user) {
-//        this = new UserDtoBuilder()
-////                .uuid(user.getUuid())
-//                .firstname(user.getFirstname())
-//                .lastname(user.getLastname())
-//                .email(user.getEmail())
-//                .phone(user.getPhone())
-//                .zip(user.getZip()).build();
-//    }
+    // Default constructor
+    public UserDto(){
+    }
 
     public String getUuid() {
         return uuid;
