@@ -22,7 +22,6 @@ public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfigu
 
     @Override
     public void initialize(final Bootstrap<PlantPoppaAuthConfiguration> bootstrap) {
-        // TODO: application initialization
         //Allow for environment variables in the configuration
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(

@@ -1,4 +1,4 @@
-package com.aheath.api;
+package com.aheath.models;
 
 import java.security.Principal;
 
@@ -122,6 +122,87 @@ public class User implements Principal {
 
     public void setSalt(byte[] salt) {
         this.salt = salt;
+    }
+
+    public UserBuilder toBuilder() {
+        return new UserBuilder()
+                .user_id(this.user_id)
+                .firstname(this.firstname)
+                .lastname(this.lastname)
+                .email(this.email)
+                .pw_hash(this.pw_hash)
+                .phone(this.phone)
+                .zip(this.zip)
+                .salt(this.salt);
+    }
+
+
+    public static class UserBuilder {
+        private int user_id;
+        private String firstname;
+        private String lastname;
+        private String email;
+        private String pw_hash;
+        private String phone;
+        private String zip;
+        private byte[] salt;
+
+        // Empty Constructor
+        public UserBuilder() {
+        }
+
+        public UserBuilder user_id(int user_id) {
+            this.user_id = user_id;
+            return this;
+        }
+
+        public UserBuilder firstname(String firstname) {
+            this.firstname = firstname;
+            return this;
+        }
+
+        public UserBuilder lastname(String lastname) {
+            this.lastname = lastname;
+            return this;
+        }
+
+        public UserBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder pw_hash(String pw_hash) {
+            this.pw_hash = pw_hash;
+            return this;
+        }
+
+        public UserBuilder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public UserBuilder zip(String zip) {
+            this.zip = zip;
+            return this;
+        }
+
+        public UserBuilder salt(byte[] salt) {
+            this.salt = salt;
+            return this;
+        }
+
+        public User build() {
+            return new User(this.user_id,
+                    this.firstname,
+                    this.lastname,
+                    this.email,
+                    this.pw_hash,
+                    this.phone,
+                    this.zip,
+                    this.salt);
+        }
+
+
     }
 
 }

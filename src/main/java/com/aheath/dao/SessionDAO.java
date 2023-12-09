@@ -1,13 +1,12 @@
-package com.aheath.db;
+package com.aheath.dao;
 
-import com.aheath.api.Session;
+import com.aheath.models.Session;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @RegisterBeanMapper(Session.class)
 public interface SessionDAO {

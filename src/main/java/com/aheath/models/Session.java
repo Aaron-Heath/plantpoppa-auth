@@ -1,4 +1,4 @@
-package com.aheath.api;
+package com.aheath.models;
 
 import java.time.LocalDate;
 

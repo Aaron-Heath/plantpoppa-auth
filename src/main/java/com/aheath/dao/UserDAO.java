@@ -1,6 +1,6 @@
-package com.aheath.db;
+package com.aheath.dao;
 
-import com.aheath.api.User;
+import com.aheath.models.User;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;

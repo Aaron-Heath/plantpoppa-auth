@@ -1,8 +1,8 @@
 package com.aheath.security;
 
-import com.aheath.api.Session;
-import com.aheath.api.User;
-import com.aheath.db.SessionDAO;
+import com.aheath.models.Session;
+import com.aheath.models.User;
+import com.aheath.dao.SessionDAO;
 import org.jdbi.v3.core.Jdbi;
 
 import java.security.NoSuchAlgorithmException;

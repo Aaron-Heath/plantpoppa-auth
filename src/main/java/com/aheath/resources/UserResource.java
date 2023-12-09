@@ -1,23 +1,15 @@
 package com.aheath.resources;
 
-import com.aheath.api.Session;
-import com.aheath.api.User;
-import com.aheath.db.SessionDAO;
-import com.aheath.db.UserDAO;
+import com.aheath.models.Session;
+import com.aheath.models.User;
+import com.aheath.dao.UserDAO;
 import com.aheath.security.AuthenticationService;
 import com.aheath.security.PasswordEncoder;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.checkerframework.checker.units.qual.C;
 import org.jdbi.v3.core.Jdbi;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.print.attribute.standard.Media;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +35,7 @@ public class UserResource {
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
     public Optional<Session> authenticateUser(User user) {
-        //
+
         User queriedUser = this.userDAO.getUserByEmail(user.getEmail());
         boolean validated = authenticator.authenticateUser(user.getPw_hash(), queriedUser.getPw_hash(), queriedUser.getSalt());
 
@@ -72,6 +64,7 @@ public class UserResource {
         // Encrypt Password
         user.setPw_hash(this.passwordEncoder.encryptPassword(user.getPw_hash(), user.getSalt()));
 
+        // TODO: Change this so it doesn't send back the hashed password
         return userDAO.createUser(
                 user.getFirstname(),
                 user.getLastname(),
