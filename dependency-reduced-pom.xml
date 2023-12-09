@@ -131,7 +131,6 @@
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <configuration>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
           <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
         </configuration>
       </plugin>
