@@ -1,9 +1,11 @@
 package com.aheath.models;
 
 import java.security.Principal;
+import java.util.UUID;
 
 public class User implements Principal {
     private int user_id;
+//    private String uuid = String.valueOf(UUID.randomUUID());
     private String firstname;
     private String lastname;
     private String email;
@@ -51,6 +53,16 @@ public class User implements Principal {
     }
     // Empty Constructor
     public User() {
+    }
+
+    public UserDto toDto() {
+        return new UserDto.UserDtoBuilder()
+//                .uuid(user.getUuid())
+                .firstname(this.getFirstname())
+                .lastname(this.getLastname())
+                .email(this.getEmail())
+                .phone(this.getPhone())
+                .zip(this.getZip()).build();
     }
 
     @Override
