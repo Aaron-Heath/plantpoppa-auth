@@ -81,9 +81,12 @@ public class User implements Principal {
         this.user_id = user_id;
     }
 
-    // No setter for uuid. UUID is either assigned or generated when instantiated.
     public String getUuid() {
         return uuid;
+    }
+
+    public void setUuid(String uuid){
+        this.uuid = uuid;
     }
 
     public String getFirstname() {
