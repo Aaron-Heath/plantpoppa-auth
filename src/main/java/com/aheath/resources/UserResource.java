@@ -67,6 +67,7 @@ public class UserResource {
 
         // TODO: Change this so it doesn't send back the hashed password
         return userDAO.createUser(
+                user.getUuid(),
                 user.getFirstname(),
                 user.getLastname(),
                 user.getEmail(),
