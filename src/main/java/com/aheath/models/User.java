@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class User implements Principal {
     private int user_id;
-//    private String uuid = String.valueOf(UUID.randomUUID());
+    private String uuid = String.valueOf(UUID.randomUUID());
     private String firstname;
     private String lastname;
     private String email;
@@ -15,8 +15,9 @@ public class User implements Principal {
     private byte[] salt;
 
     // Full constructor
-    public User(int user_id, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
+    public User(int user_id, String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
         this.user_id = user_id;
+        this.uuid = uuid;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -57,7 +58,7 @@ public class User implements Principal {
 
     public UserDto toDto() {
         return new UserDto.UserDtoBuilder()
-//                .uuid(user.getUuid())
+                .uuid(this.getUuid())
                 .firstname(this.getFirstname())
                 .lastname(this.getLastname())
                 .email(this.getEmail())
@@ -78,6 +79,14 @@ public class User implements Principal {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid){
+        this.uuid = uuid;
     }
 
     public String getFirstname() {
@@ -151,6 +160,7 @@ public class User implements Principal {
 
     public static class UserBuilder {
         private int user_id;
+        private String uuid;
         private String firstname;
         private String lastname;
         private String email;
@@ -165,6 +175,11 @@ public class User implements Principal {
 
         public UserBuilder user_id(int user_id) {
             this.user_id = user_id;
+            return this;
+        }
+
+        public UserBuilder uuid(String uuid){
+            this.uuid = uuid;
             return this;
         }
 
@@ -205,6 +220,7 @@ public class User implements Principal {
 
         public User build() {
             return new User(this.user_id,
+                    this.uuid,
                     this.firstname,
                     this.lastname,
                     this.email,

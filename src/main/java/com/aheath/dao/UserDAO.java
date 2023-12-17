@@ -14,11 +14,11 @@ public interface UserDAO {
     @SqlQuery("SELECT user_id,firstname,lastname,email,phone,zip FROM user_account")
     List<User> getAllUsers();
 
-    @SqlUpdate("INSERT INTO user_account (firstname, lastname, email, pw_hash, phone, zip, salt) VALUES" +
-            "(:firstname, :lastname, :email, :pw_hash, :phone, :zip, :salt)" +
+    @SqlUpdate("INSERT INTO user_account (uuid,firstname, lastname, email, pw_hash, phone, zip, salt) VALUES" +
+            "(:uuid, :firstname, :lastname, :email, :pw_hash, :phone, :zip, :salt)" +
             "RETURNING user_id")
     @GetGeneratedKeys
-    int createUser(@Bind("firstname") String firstname,@Bind("lastname") String lastname, @Bind("email") String email, @Bind("pw_hash") String pw_hash, @Bind("phone") String phone, @Bind("zip") String zip, @Bind("salt") byte[] salt);
+    int createUser(@Bind("uuid") String uuid, @Bind("firstname") String firstname,@Bind("lastname") String lastname, @Bind("email") String email, @Bind("pw_hash") String pw_hash, @Bind("phone") String phone, @Bind("zip") String zip, @Bind("salt") byte[] salt);
 
     // Method for authentication
 
