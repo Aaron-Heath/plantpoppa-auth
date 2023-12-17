@@ -37,15 +37,15 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Optional<Session> authenticateUser(UserDto userDto) {
 
-        User queriedUser = this.userDAO.getUserByEmail(userDto.getEmail());
-        boolean validated = authenticator.authenticateUser(userDto.getPassword(), queriedUser.getPw_hash(), queriedUser.getSalt());
-
-        if(validated) {
-            // Create session
-            Session session = authenticator.createSession(queriedUser);
-            return Optional.of(session);
-        }
-        return Optional.empty();
+//        User queriedUser = this.userDAO.getUserByEmail(userDto.getEmail());
+//        boolean validated = authenticator.authenticateUser(userDto.getPassword(), queriedUser.getPw_hash(), queriedUser.getSalt());
+        return authenticator.authenticateUser(userDto);
+//        if(validated) {
+//            // Create session
+//            Session session = authenticator.createSession(userDto.toUser());
+//            return Optional.of(session);
+//        }
+//        return Optional.empty();
 
     }
 

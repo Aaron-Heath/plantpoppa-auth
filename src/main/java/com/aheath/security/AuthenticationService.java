@@ -1,24 +1,29 @@
 package com.aheath.security;
 
+import com.aheath.dao.UserDAO;
 import com.aheath.models.Session;
 import com.aheath.models.User;
 import com.aheath.dao.SessionDAO;
+import com.aheath.models.UserDto;
 import org.jdbi.v3.core.Jdbi;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.Optional;
 
 public class AuthenticationService {
 
     // Store password encoder
     private final PasswordEncoder passwordEncoder;
     private final SessionDAO sessionDAO;
+    private final UserDAO userDAO;
     private final SecureRandom random = new SecureRandom();
 
     public AuthenticationService(Jdbi jdbi) {
         this.sessionDAO = jdbi.onDemand(SessionDAO.class);
+        this.userDAO = jdbi.onDemand(UserDAO.class);
     }
 
     {
@@ -49,12 +54,22 @@ public class AuthenticationService {
 
 
     // Compare user provided credentials with those pulled from database
-    public boolean authenticateUser(String passwordInput, final String validPassword, final byte[] validSalt) {
-        // If user successfully validates, return true
+    public Optional<Session> authenticateUser(UserDto userDto) {
+        // TODO: Handle when no user is found with email input
+        User queriedUser = this.userDAO.getUserByEmail(userDto.getEmail());
+
+
+
+
         // Encrypt input password with same salt from db
-        final String encryptedInput = this.passwordEncoder.encryptPassword(passwordInput,validSalt);
+        final String encryptedInput = this.passwordEncoder.encryptPassword(userDto.getPassword(), queriedUser.getSalt());
 
         // If input password validates to the same result, returns true. Otherwise, returns false.
-        return encryptedInput.equals(validPassword);
+        if(encryptedInput.equals(queriedUser.getPw_hash())){
+            Session session = this.createSession(queriedUser);
+            return Optional.of(session);
+        }
+
+        return Optional.empty();
     }
 }
