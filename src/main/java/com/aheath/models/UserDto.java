@@ -4,8 +4,8 @@ public class UserDto {
     /**
      * Add builder to user ✅
      * Add uuid to user
-     * Build UserDto
-     * Add builder to UserDto
+     * Build UserDto ✅
+     * Add builder to UserDto ✅
      */
 
     private String uuid;
