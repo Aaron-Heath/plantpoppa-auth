@@ -3,6 +3,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+#SQL Schema and Seeds
+src/main/java/com/aheath/sql/**
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/misc.xml

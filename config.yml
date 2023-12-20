@@ -14,6 +14,6 @@ server:
 # Database Settings
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/plantpoppa
+  url: jdbc:postgresql://localhost:5432/plantpoppa_db
   user: postgres
   password: ${DATABASE_PASSWORD}
