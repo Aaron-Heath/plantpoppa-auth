@@ -1,5 +1,6 @@
 package com.aheath;
 
+import com.aheath.filters.TokenFilterFeature;
 import com.aheath.resources.UserResource;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -8,8 +9,6 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import io.dropwizard.jdbi3.JdbiFactory;
-import org.jdbi.v3.core.Jdbi;
 
 public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfiguration> {
 
@@ -40,6 +39,7 @@ public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfigu
 
         //retrieve user resource
         environment.jersey().register(injector.getInstance(UserResource.class));
+        environment.jersey().register(TokenFilterFeature.class);
     }
 
 

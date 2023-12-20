@@ -1,5 +1,6 @@
 package com.aheath.resources;
 
+import com.aheath.annotations.AuthenticationRequired;
 import com.aheath.models.Session;
 import com.aheath.models.User;
 import com.aheath.dao.UserDAO;
@@ -30,7 +31,7 @@ public class UserResource {
         this.userService = userService;
     }
 
-
+    @AuthenticationRequired
     @GET
     public List<User> getAllUsers() {
 //        return userDAO.getAllUsers();
