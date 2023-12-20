@@ -9,7 +9,6 @@ public class PlantPoppaAuthConfiguration extends Configuration {
     @Valid
     private DataSourceFactory database;
 
-
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {
         return database;
