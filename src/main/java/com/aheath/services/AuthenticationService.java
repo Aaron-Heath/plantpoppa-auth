@@ -1,10 +1,13 @@
-package com.aheath.security;
+package com.aheath.services;
 
 import com.aheath.dao.UserDAO;
 import com.aheath.models.Session;
 import com.aheath.models.User;
 import com.aheath.dao.SessionDAO;
 import com.aheath.models.UserDto;
+import com.aheath.security.PasswordEncoder;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.jdbi.v3.core.Jdbi;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,7 +24,8 @@ public class AuthenticationService {
     private final UserDAO userDAO;
     private final SecureRandom random = new SecureRandom();
 
-    public AuthenticationService(Jdbi jdbi) {
+    @Inject
+    public AuthenticationService(@Named("user") Jdbi jdbi) {
         this.sessionDAO = jdbi.onDemand(SessionDAO.class);
         this.userDAO = jdbi.onDemand(UserDAO.class);
     }

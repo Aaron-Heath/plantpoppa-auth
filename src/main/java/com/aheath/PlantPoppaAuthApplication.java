@@ -8,6 +8,8 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jdbi3.JdbiFactory;
+import org.jdbi.v3.core.Jdbi;
 
 public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfiguration> {
 

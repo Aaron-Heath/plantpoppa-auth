@@ -17,7 +17,12 @@ public class User implements Principal {
     // Full constructor
     public User(int user_id, String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
         this.user_id = user_id;
-        this.uuid = uuid;
+        // Add if condition for UserBuilder user creation
+        if(uuid == null) {
+            this.uuid = String.valueOf(UUID.randomUUID());
+        } else {
+            this.uuid = uuid;
+        }
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -28,7 +33,8 @@ public class User implements Principal {
     }
 
     // Constructor without id
-    public User(String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
+    public User(String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
+        this.uuid = uuid;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -221,10 +227,10 @@ public class User implements Principal {
         public User build() {
             return new User(this.user_id,
                     this.uuid,
-                    this.firstname,
-                    this.lastname,
                     this.email,
                     this.pw_hash,
+                    this.firstname,
+                    this.lastname,
                     this.phone,
                     this.zip,
                     this.salt);
