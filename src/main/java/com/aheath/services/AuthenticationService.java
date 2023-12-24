@@ -76,4 +76,21 @@ public class AuthenticationService {
 
         return Optional.empty();
     }
+
+    public boolean validateSession(String token) {
+        // Returns true if session is valid
+        Session storedSession = sessionDAO.getSessionByToken(token);
+
+        // Return false if StoredSession is null
+        if(storedSession == null) {
+            return false;
+        }
+
+        // Compare date to expiration date
+        LocalDate today = LocalDate.now();
+
+        // returns false if today is after expiration date - true if it is not after.
+        return !today.isAfter(storedSession.getExpiration());
+
+    }
 }

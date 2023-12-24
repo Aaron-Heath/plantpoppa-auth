@@ -1,5 +1,6 @@
 package com.aheath;
 
+import com.aheath.filters.TokenFilter;
 import com.aheath.resources.UserResource;
 import com.aheath.security.PasswordEncoder;
 import com.aheath.services.AuthenticationService;
@@ -64,6 +65,12 @@ public class PlantPoppaAuthModule extends AbstractModule {
     @Named("userService")
     public UserService userService(@Named("user") Jdbi jdbi, @Named("passwordEncoder") PasswordEncoder passwordEncoder) {
         return new UserService(jdbi, passwordEncoder);
+    }
+
+    @Provides
+    @Named("tokenFilter")
+    public TokenFilter TokenFilter(@Named("authenticator") AuthenticationService authenticationService) {
+        return new TokenFilter(authenticationService);
     }
 
     // DAO Providers

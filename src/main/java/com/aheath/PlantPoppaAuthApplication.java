@@ -1,5 +1,6 @@
 package com.aheath;
 
+import com.aheath.filters.TokenFilter;
 import com.aheath.filters.TokenFilterFeature;
 import com.aheath.resources.UserResource;
 import com.google.inject.Guice;
@@ -39,7 +40,7 @@ public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfigu
 
         //retrieve user resource
         environment.jersey().register(injector.getInstance(UserResource.class));
-        environment.jersey().register(TokenFilterFeature.class);
+        environment.jersey().register(injector.getInstance(TokenFilter.class));
     }
 
 
