@@ -4,18 +4,20 @@ import com.aheath.dao.UserDAO;
 import com.aheath.models.User;
 import com.aheath.models.UserDto;
 import com.aheath.security.PasswordEncoder;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
 
+@Singleton
 public class UserService {
     private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
 
     @Inject
-    public UserService(@Named("user") Jdbi jdbi, @Named("passwordEncoder") PasswordEncoder passwordEncoder) {
+    public UserService(Jdbi jdbi, PasswordEncoder passwordEncoder) {
         this.userDAO = jdbi.onDemand(UserDAO.class);
         this.passwordEncoder = passwordEncoder;
     }

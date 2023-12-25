@@ -6,8 +6,9 @@ import com.aheath.models.User;
 import com.aheath.dao.SessionDAO;
 import com.aheath.models.UserDto;
 import com.aheath.security.PasswordEncoder;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.jdbi.v3.core.Jdbi;
 
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Optional;
 
+@Singleton
 public class AuthenticationService {
 
     // Store password encoder
@@ -25,7 +27,7 @@ public class AuthenticationService {
     private final SecureRandom random = new SecureRandom();
 
     @Inject
-    public AuthenticationService(@Named("user") Jdbi jdbi) {
+    public AuthenticationService(Jdbi jdbi) {
         this.sessionDAO = jdbi.onDemand(SessionDAO.class);
         this.userDAO = jdbi.onDemand(UserDAO.class);
     }

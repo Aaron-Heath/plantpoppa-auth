@@ -1,9 +1,9 @@
 package com.aheath.filters;
 
 import com.aheath.services.AuthenticationService;
-import io.dropwizard.auth.UnauthorizedHandler;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -15,13 +15,16 @@ import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @Provider
+@Singleton
 public class TokenFilter implements ContainerRequestFilter {
     private final AuthenticationService authenticator;
 
     @Inject
-    public TokenFilter(@Named("authenticator") AuthenticationService authenticationService){
+    public TokenFilter(AuthenticationService authenticationService){
         this.authenticator = authenticationService;
     }
+
+
 
     @Override
     public void filter(ContainerRequestContext ctx) throws IOException {

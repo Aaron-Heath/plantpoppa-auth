@@ -21,12 +21,11 @@ import java.util.Optional;
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
-    private PasswordEncoder passwordEncoder;
     private AuthenticationService authenticator;
     private UserService userService;
 
     @Inject
-    public UserResource(@Named("authenticator") AuthenticationService authenticationService, @Named("userService") UserService userService) {
+    public UserResource(AuthenticationService authenticationService, UserService userService) {
         this.authenticator = authenticationService;
         this.userService = userService;
     }
