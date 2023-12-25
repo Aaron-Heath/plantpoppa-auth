@@ -3,18 +3,17 @@ package com.aheath.resources;
 import com.aheath.annotations.AuthenticationRequired;
 import com.aheath.models.Session;
 import com.aheath.models.User;
-import com.aheath.dao.UserDAO;
 import com.aheath.models.UserDto;
 import com.aheath.services.AuthenticationService;
-import com.aheath.security.PasswordEncoder;
 import com.aheath.services.UserService;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import org.jdbi.v3.core.Jdbi;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 

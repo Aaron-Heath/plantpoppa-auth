@@ -10,7 +10,7 @@ import jakarta.ws.rs.ext.Provider;
 public class TokenFilterFeature implements DynamicFeature {
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
-        if(resourceInfo.getResourceMethod().getAnnotation(AuthenticationRequired.class) != null){
+        if (resourceInfo.getResourceMethod().getAnnotation(AuthenticationRequired.class) != null) {
             context.register(TokenFilter.class);
         }
     }

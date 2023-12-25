@@ -1,9 +1,8 @@
 package com.aheath.filters;
 
 import com.aheath.services.AuthenticationService;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
+import jakarta.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -20,27 +19,25 @@ public class TokenFilter implements ContainerRequestFilter {
     private final AuthenticationService authenticator;
 
     @Inject
-    public TokenFilter(AuthenticationService authenticationService){
+    public TokenFilter(AuthenticationService authenticationService) {
         this.authenticator = authenticationService;
     }
-
-
 
     @Override
     public void filter(ContainerRequestContext ctx) throws IOException {
         // Log request
-        System.out.printf("%s request heard for %s.\n",ctx.getMethod(),ctx.getUriInfo().toString());
+        System.out.printf("%s request heard for %s.\n", ctx.getMethod(), ctx.getUriInfo().toString());
         MultivaluedMap<String, String> headers = ctx.getHeaders();
 
         // Remove open and closing brackets from token.
-        String token = headers.get("Authentication").toString().replaceAll("[\\[\\]]","");
+        String token = headers.get("Authentication").toString().replaceAll("[\\[\\]]", "");
 
 
         // Print out authentication token
         System.out.println(token);
         boolean authenticated = authenticator.validateSession(token);
 
-        if(!authenticated) {
+        if (!authenticated) {
             Exception cause = new NotAuthorizedException("Bad authentication credentials");
             throw new WebApplicationException(cause, Response.Status.UNAUTHORIZED);
         }

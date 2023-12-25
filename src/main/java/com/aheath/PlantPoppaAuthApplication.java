@@ -1,10 +1,5 @@
 package com.aheath;
 
-import com.aheath.filters.TokenFilter;
-import com.aheath.filters.TokenFilterFeature;
-import com.aheath.resources.UserResource;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
@@ -34,8 +29,7 @@ public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfigu
         );
 
         bootstrap.addBundle(GuiceBundle.builder()
-                .enableAutoConfig().
-                modules(new PlantPoppaAuthModule())
+                .modules(new PlantPoppaAuthModule())
                 .build());
     }
 

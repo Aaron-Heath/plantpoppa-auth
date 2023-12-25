@@ -1,17 +1,14 @@
 package com.aheath.services;
 
+import com.aheath.dao.SessionDAO;
 import com.aheath.dao.UserDAO;
 import com.aheath.models.Session;
 import com.aheath.models.User;
-import com.aheath.dao.SessionDAO;
 import com.aheath.models.UserDto;
 import com.aheath.security.PasswordEncoder;
-
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.jdbi.v3.core.Jdbi;
+import jakarta.inject.Inject;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Base64;
@@ -22,23 +19,20 @@ public class AuthenticationService {
 
     // Store password encoder
     private final PasswordEncoder passwordEncoder;
-    private final SessionDAO sessionDAO;
-    private final UserDAO userDAO;
+    private final SessionDAO sessionDAO = null;
+    private final UserDAO userDAO = null;
     private final SecureRandom random = new SecureRandom();
 
     @Inject
-    public AuthenticationService(Jdbi jdbi) {
-        this.sessionDAO = jdbi.onDemand(SessionDAO.class);
-        this.userDAO = jdbi.onDemand(UserDAO.class);
+    public AuthenticationService(
+            PasswordEncoder encoder
+//            Jdbi jdbi
+    ) {
+        this.passwordEncoder = encoder;
+//        this.sessionDAO = jdbi.onDemand(SessionDAO.class);
+//        this.userDAO = jdbi.onDemand(UserDAO.class);
     }
 
-    {
-        try {
-            passwordEncoder = new PasswordEncoder();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
     //    Takes a successfully authenticated user and returns the user and session
     public Session createSession(User user) {
         //  Generate token
@@ -65,13 +59,11 @@ public class AuthenticationService {
         User queriedUser = this.userDAO.getUserByEmail(userDto.getEmail());
 
 
-
-
         // Encrypt input password with same salt from db
         final String encryptedInput = this.passwordEncoder.encryptPassword(userDto.getPassword(), queriedUser.getSalt());
 
         // If input password validates to the same result, returns true. Otherwise, returns false.
-        if(encryptedInput.equals(queriedUser.getPw_hash())){
+        if (encryptedInput.equals(queriedUser.getPw_hash())) {
             Session session = this.createSession(queriedUser);
             return Optional.of(session);
         }
@@ -84,7 +76,7 @@ public class AuthenticationService {
         Session storedSession = sessionDAO.getSessionByToken(token);
 
         // Return false if StoredSession is null
-        if(storedSession == null) {
+        if (storedSession == null) {
             return false;
         }
 
