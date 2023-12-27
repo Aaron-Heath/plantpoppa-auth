@@ -1,13 +1,6 @@
-package com.aheath.models;
+package com.plantpoppa.auth.models;
 
 public class UserDto {
-    /**
-     * Add builder to user ✅
-     * Add uuid to user
-     * Build UserDto ✅
-     * Add builder to UserDto ✅
-     */
-
     private String uuid;
     private String firstname;
     private String lastname;

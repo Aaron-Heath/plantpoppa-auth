@@ -1,10 +1,14 @@
-package com.aheath.models;
+package com.plantpoppa.auth.models;
 
-import java.security.Principal;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 import java.util.UUID;
 
-public class User implements Principal {
-    private int user_id;
+@Entity
+public class User {
+    private @Id int user_id;
     private String uuid = String.valueOf(UUID.randomUUID());
     private String firstname;
     private String lastname;
@@ -13,6 +17,7 @@ public class User implements Principal {
     private String phone;
     private String zip;
     private byte[] salt;
+
 
     // Full constructor
     public User(int user_id, String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
@@ -71,13 +76,6 @@ public class User implements Principal {
                 .phone(this.getPhone())
                 .zip(this.getZip()).build();
     }
-
-    @Override
-    public String getName() {
-        return this.getFirstname() + " " + this.getLastname();
-    }
-
-
 
     public int getUser_id() {
         return user_id;
