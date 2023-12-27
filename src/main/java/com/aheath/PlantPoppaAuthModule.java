@@ -5,12 +5,12 @@ import com.aheath.resources.UserResource;
 import com.aheath.security.PasswordEncoder;
 import com.aheath.services.AuthenticationService;
 import com.aheath.services.UserService;
-import com.google.inject.AbstractModule;
+
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jdbi3.JdbiFactory;
 import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.jdbi.v3.core.Jdbi;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 

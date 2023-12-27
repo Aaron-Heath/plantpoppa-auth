@@ -34,8 +34,7 @@ public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfigu
         );
 
         bootstrap.addBundle(GuiceBundle.builder()
-                .enableAutoConfig().
-                modules(new PlantPoppaAuthModule())
+                .modules(new PlantPoppaAuthModule())
                 .build());
     }
 
@@ -45,7 +44,7 @@ public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfigu
 //        Injector injector = Guice.createInjector(new PlantPoppaAuthModule(configuration,environment));
 
         //retrieve user resource
-//        environment.jersey().register(UserResource.class);
+        environment.jersey().register(UserResource.class);
 //        environment.jersey().register(TokenFilterFeature.class);
     }
 

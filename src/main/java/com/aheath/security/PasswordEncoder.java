@@ -1,5 +1,7 @@
 package com.aheath.security;
 
+import jakarta.inject.Inject;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +23,7 @@ public class PasswordEncoder {
     private final int iterationCount = 65536;
     private final int keyLength = 128;
 
+    @Inject
     public PasswordEncoder() throws NoSuchAlgorithmException {
     }
 

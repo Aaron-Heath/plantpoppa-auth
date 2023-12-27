@@ -7,8 +7,8 @@ import com.aheath.dao.SessionDAO;
 import com.aheath.models.UserDto;
 import com.aheath.security.PasswordEncoder;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.jdbi.v3.core.Jdbi;
 
 import java.security.NoSuchAlgorithmException;
