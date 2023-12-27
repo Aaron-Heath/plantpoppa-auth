@@ -4,23 +4,26 @@ import com.aheath.dao.UserDAO;
 import com.aheath.models.User;
 import com.aheath.models.UserDto;
 import com.aheath.security.PasswordEncoder;
+import com.google.inject.Singleton;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
 
+@Singleton
 public class UserService {
-    private final UserDAO userDAO;
+    private final UserDAO userDAO = null;
     private final PasswordEncoder passwordEncoder;
 
     @Inject
-    public UserService(@Named("user") Jdbi jdbi, @Named("passwordEncoder") PasswordEncoder passwordEncoder) {
-        this.userDAO = jdbi.onDemand(UserDAO.class);
+    public UserService(
+//            Jdbi jdbi,
+            PasswordEncoder passwordEncoder
+    ) {
+//        this.userDAO = jdbi.onDemand(UserDAO.class);
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userDAO.getAllUsers();
     }
 
@@ -41,7 +44,7 @@ public class UserService {
         user.setSalt(this.passwordEncoder.generateSalt());
 
         // Encrypt and set password
-        user.setPw_hash(this.passwordEncoder.encryptPassword(userDto.getPassword(),user.getSalt()));
+        user.setPw_hash(this.passwordEncoder.encryptPassword(userDto.getPassword(), user.getSalt()));
 
         // Add user to db
         userDAO.createUser(

@@ -17,11 +17,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>4.0.1</dropwizard.version>
+        <dropwizard.guice.version>7.1.0</dropwizard.guice.version>
         <mainClass>com.aheath.PlantPoppaAuthApplication</mainClass>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>ru.vyarus</groupId>
+                <artifactId>dropwizard-guicey</artifactId>
+                <version>7.0.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-dependencies</artifactId>
@@ -52,18 +60,18 @@
         <dependency>
             <groupId>ru.vyarus</groupId>
             <artifactId>dropwizard-guicey</artifactId>
-            <version>7.0.1</version>
+            <version>${dropwizard.guice.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.dropwizard/dropwizard-jdbi3 -->
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jdbi3</artifactId>
-            <version>4.0.1</version>
+            <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-auth</artifactId>
-            <version>4.0.0</version>
+            <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

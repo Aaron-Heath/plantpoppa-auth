@@ -1,15 +1,11 @@
 package com.aheath;
 
-import com.aheath.resources.UserResource;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import io.dropwizard.jdbi3.JdbiFactory;
-import org.jdbi.v3.core.Jdbi;
+import ru.vyarus.dropwizard.guice.GuiceBundle;
 
 public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfiguration> {
 
@@ -31,15 +27,20 @@ public class PlantPoppaAuthApplication extends Application<PlantPoppaAuthConfigu
                         new EnvironmentVariableSubstitutor(false)
                 )
         );
+
+        bootstrap.addBundle(GuiceBundle.builder()
+                .modules(new PlantPoppaAuthModule())
+                .build());
     }
 
     @Override
     public void run(final PlantPoppaAuthConfiguration configuration,
                     final Environment environment) {
-        Injector injector = Guice.createInjector(new PlantPoppaAuthModule(configuration,environment));
+//        Injector injector = Guice.createInjector(new PlantPoppaAuthModule(configuration,environment));
 
         //retrieve user resource
-        environment.jersey().register(injector.getInstance(UserResource.class));
+//        environment.jersey().register(UserResource.class);
+//        environment.jersey().register(TokenFilterFeature.class);
     }
 
 
