@@ -21,6 +21,10 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     nativeQuery = true)
     Session fetchOneByToken(String token);
 
+    @Query(value="SELECT * FROM session WHERE token = ?1 AND expiration >= CURRENT_DATE",
+            nativeQuery = true)
+    Session fetchOneValidToken(String token);
+
     @Transactional
     @Modifying
     @Query(value="INSERT INTO session (user_id, token, expiration) VALUES (?1, ?2, ?3)",

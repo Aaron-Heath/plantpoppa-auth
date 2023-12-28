@@ -35,4 +35,10 @@ public class AuthResource {
     Optional<Session> basicAuth(@RequestBody UserDto userDto) {
         return authenticator.basicAuth(userDto);
     }
+
+    @PostMapping(value="/token",
+    consumes=MediaType.APPLICATION_JSON_VALUE)
+    boolean tokenAuth(@RequestBody Session session) {
+        return authenticator.validateToken(session.getToken());
+    }
 }

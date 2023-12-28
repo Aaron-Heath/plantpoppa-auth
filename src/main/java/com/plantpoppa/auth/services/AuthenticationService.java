@@ -44,9 +44,17 @@ public class AuthenticationService {
             }
         }
         return Optional.empty();
+    }
 
+    public boolean validateToken(String token) {
+        System.out.println(token);
+        Session validSession = sessionRepository.fetchOneValidToken(token);
 
-
+        // Return false if no valid session found. Else return true.
+        if(validSession == null) {
+            return false;
+        }
+        return true;
     }
 
     Session createSession(User user) {
