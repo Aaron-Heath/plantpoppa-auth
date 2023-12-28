@@ -68,7 +68,7 @@ public class AuthenticationService {
         LocalDate expiration = LocalDate.now().plusMonths(3);
 
 
-        // Call SessionDAO.createSession();
+        // Call SessionRepository.createSession();
         sessionRepository.createSession(user.getUser_id(), token, expiration);
 
         // return session
