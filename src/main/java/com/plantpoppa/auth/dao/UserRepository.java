@@ -61,4 +61,13 @@ public interface UserRepository  extends JpaRepository<User, Integer> {
             "WHERE uuid = ?2 " +
             "AND (zip = ?3 OR zip IS NULL)", nativeQuery = true)
     int updateUserZip(String zip, String uuid, String storedZip);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE user_account SET " +
+            "pw_hash = ?1," +
+            "salt = ?2 " +
+            "WHERE pw_hash = ?3 AND salt = ?4", nativeQuery = true)
+    int updateUserPw(String pwHash, byte[] salt, String storedPwHash, byte[] storedSalt);
 }

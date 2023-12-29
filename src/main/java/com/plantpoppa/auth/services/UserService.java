@@ -17,10 +17,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository repository;
+    private final AuthenticationService authenticator;
 
     @Autowired
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, AuthenticationService authenticator) {
         this.repository = repository;
+        this.authenticator = authenticator;
     }
 
     public List<UserDto> findAllUsers(){

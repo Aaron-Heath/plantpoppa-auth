@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Component
 public class AuthenticationService {
-    private final PasswordEncoder passwordEncoder;
+    public final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final SecureRandom random = new SecureRandom();
@@ -73,5 +73,21 @@ public class AuthenticationService {
 
         // return session
         return new Session(user.getUser_id(), token, expiration);
+    }
+
+    public int updateUserPassword(UserDto userDto, String newPassword) {
+        User storedUser = userRepository.fetchOneByUuid(userDto.getUuid());
+
+        byte[] newSalt = passwordEncoder.generateSalt();
+        String encryptedNewPassword = passwordEncoder.encryptPassword(newPassword,
+                newSalt);
+
+        String storedPassword = storedUser.getPw_hash();
+        byte[] storedSalt = storedUser.getSalt();
+
+        return userRepository.updateUserPw(encryptedNewPassword,
+                newSalt,
+                storedPassword,
+                storedSalt);
     }
 }

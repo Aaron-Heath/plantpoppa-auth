@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -41,4 +42,17 @@ public class AuthResource {
     boolean tokenAuth(@RequestBody Session session) {
         return authenticator.validateToken(session.getToken());
     }
+
+    @PostMapping(value="/password",
+            consumes=MediaType.APPLICATION_JSON_VALUE)
+    int updateUserPassword(@RequestBody Map<String, String> body) {
+        UserDto userDto= new UserDto.UserDtoBuilder()
+                .uuid(body.get("uuid"))
+                .password(body.get("password")).build();
+
+        String newPassword = body.get("newPassword");
+
+        return authenticator.updateUserPassword(userDto, newPassword);
+    }
+
 }

@@ -52,5 +52,4 @@ public class UserResource {
         return userService.updateUserZip(userDto);
     }
 
-
 }
