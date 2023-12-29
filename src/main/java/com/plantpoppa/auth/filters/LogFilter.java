@@ -19,5 +19,7 @@ public class LogFilter implements Filter {
         // Print timestamp, IP address, method, and endpoint for request
         System.out.printf("%s  %s %s request for %s\n",
                 LocalDateTime.now(),req.getRemoteAddr(),req.getMethod(), req.getRequestURI());
+
+        filterChain.doFilter(request,response);
     }
 }

@@ -40,6 +40,9 @@ public class UserService {
             );
         });
         return userDtoList;
+    }
 
+    public int deleteOneByUuid(UserDto userDto) {
+        return repository.deleteOneByUuid(userDto.getUuid());
     }
 }
