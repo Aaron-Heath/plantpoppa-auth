@@ -1,8 +1,6 @@
 package com.plantpoppa.auth.dao;
 
 import com.plantpoppa.auth.models.User;
-import com.plantpoppa.auth.models.UserDto;
-import jakarta.inject.Singleton;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,4 +29,28 @@ public interface UserRepository  extends JpaRepository<User, Integer> {
     @Query(value="DELETE FROM user_account WHERE uuid = ?1",
     nativeQuery = true)
     int deleteOneByUuid(String uuid);
+
+    @Transactional
+    @Modifying
+    @Query(value="Update user_account SET " +
+            "firstname = ?1 " +
+            "WHERE uuid = ?2 " +
+            "AND firstname = ?3", nativeQuery = true)
+    int updateUserFirstname(String firstname, String uuid, String storedName);
+
+    @Transactional
+    @Modifying
+    @Query(value="Update user_account SET " +
+            "lastname = ?1 " +
+            "WHERE uuid = ?2 " +
+            "AND lastname = ?3", nativeQuery = true)
+    int updateUserLastname(String lastname, String uuid, String storedName);
+
+    @Transactional
+    @Modifying
+    @Query(value="Update user_account SET " +
+            "phone = ?1 " +
+            "WHERE uuid = ?2 " +
+            "AND phone = ?3", nativeQuery = true)
+    int updateUserPhone(String phone, String uuid, String storedPhone);
 }

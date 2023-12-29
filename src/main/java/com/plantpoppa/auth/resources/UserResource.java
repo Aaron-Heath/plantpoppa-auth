@@ -6,9 +6,8 @@ import com.plantpoppa.auth.models.UserDto;
 import com.plantpoppa.auth.services.UserService;
 import jakarta.inject.Inject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,25 @@ public class UserResource {
     @GetMapping("/")
     List<UserDto> findAllUsers() {
         return userService.findAllUsers();
+    }
+
+    @PutMapping(value="/firstname",
+    consumes= MediaType.APPLICATION_JSON_VALUE)
+    int updateUserFirstname(@RequestBody UserDto userDto) {
+        return userService.updateUserFirstname(userDto);
+    }
+
+    @PutMapping(value="/lastname",
+            consumes= MediaType.APPLICATION_JSON_VALUE)
+    int updateUseLastname(@RequestBody UserDto userDto) {
+        return userService.updateUserLastname(userDto);
+    }
+
+    // FIXIT: Not working. May have to do with null phone values
+    @PutMapping(value="/phone",
+            consumes= MediaType.APPLICATION_JSON_VALUE)
+    int updateUsePhone(@RequestBody UserDto userDto) {
+        return userService.updateUserPhone(userDto);
     }
 
 
