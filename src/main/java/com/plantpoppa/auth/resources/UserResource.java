@@ -40,11 +40,16 @@ public class UserResource {
         return userService.updateUserLastname(userDto);
     }
 
-    // FIXIT: Not working. May have to do with null phone values
     @PutMapping(value="/phone",
             consumes= MediaType.APPLICATION_JSON_VALUE)
-    int updateUsePhone(@RequestBody UserDto userDto) {
+    int updateUserPhone(@RequestBody UserDto userDto) {
         return userService.updateUserPhone(userDto);
+    }
+
+    @PutMapping(value="/zip",
+            consumes= MediaType.APPLICATION_JSON_VALUE)
+    int updateUserZip(@RequestBody UserDto userDto) {
+        return userService.updateUserZip(userDto);
     }
 
 

@@ -81,4 +81,15 @@ public class UserService {
                 uuid,
                 storedPhone);
     }
+
+    public int updateUserZip(UserDto userDto) {
+        User storedUser = this.repository.fetchOneByUuid(userDto.getUuid());
+        String newZip = userDto.getZip();
+        String storedZip = storedUser.getZip();
+        String uuid = storedUser.getUuid();
+
+        return repository.updateUserZip(newZip,
+                uuid,
+                storedZip);
+    }
 }
