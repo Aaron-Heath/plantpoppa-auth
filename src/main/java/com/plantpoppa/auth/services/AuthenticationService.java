@@ -32,6 +32,24 @@ public class AuthenticationService {
     }
 
     public Optional<Session> basicAuth(UserDto userDto) {
+        // Return empty if no user found
+        Optional<User> validatedUser = this.validateBasicCredentials(userDto);
+
+        if (validatedUser.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(this.createSession(validatedUser.get()));
+//            // Encrypt input password with db salt
+//            final String encryptedInput = passwordEncoder.encryptPassword(
+//                    userDto.getPassword(),
+//                    queriedUser.getSalt());
+//            if (encryptedInput.equals(queriedUser.getPw_hash())) {
+//                return Optional.of(this.createSession(queriedUser));
+//            }
+        }
+    }
+
+    public Optional<User> validateBasicCredentials(UserDto userDto) {
         User queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
         // Return empty if no user found
         if (queriedUser != null) {
@@ -40,10 +58,11 @@ public class AuthenticationService {
                     userDto.getPassword(),
                     queriedUser.getSalt());
             if (encryptedInput.equals(queriedUser.getPw_hash())) {
-                return Optional.of(this.createSession(queriedUser));
+                return Optional.of(queriedUser);
             }
         }
         return Optional.empty();
+
     }
 
     public boolean validateToken(String token) {
