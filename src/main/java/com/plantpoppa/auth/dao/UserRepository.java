@@ -1,6 +1,7 @@
 package com.plantpoppa.auth.dao;
 
 import com.plantpoppa.auth.models.User;
+import com.plantpoppa.auth.models.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -70,4 +71,8 @@ public interface UserRepository  extends JpaRepository<User, Integer> {
             "salt = ?2 " +
             "WHERE pw_hash = ?3 AND salt = ?4", nativeQuery = true)
     int updateUserPw(String pwHash, byte[] salt, String storedPwHash, byte[] storedSalt);
+
+    @Query(value="SELECT * FROM user_account WHERE " +
+            "uuid = ?1 AND email = ?2", nativeQuery = true)
+    User fetchOneByEmailAndUuid(String uuid, String email);
 }

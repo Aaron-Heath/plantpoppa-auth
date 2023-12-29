@@ -33,7 +33,12 @@ public class AuthenticationService {
 
     public Optional<Session> basicAuth(UserDto userDto) {
         // Return empty if no user found
-        Optional<User> validatedUser = this.validateBasicCredentials(userDto);
+        Optional<User> validatedUser;
+        try {
+            validatedUser = this.validateBasicCredentials(userDto);
+        } catch (Exception e) {
+            validatedUser = Optional.empty();
+        }
 
         if (validatedUser.isEmpty()) {
             return Optional.empty();
@@ -49,8 +54,20 @@ public class AuthenticationService {
         }
     }
 
-    public Optional<User> validateBasicCredentials(UserDto userDto) {
-        User queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
+    public Optional<User> validateBasicCredentials(UserDto userDto) throws Exception {
+        User queriedUser;
+
+        // Check for email and/or uuid
+        if(userDto.getUuid() != null && userDto.getEmail() == null) {
+            queriedUser = userRepository.fetchOneByUuid(userDto.getUuid());
+        } else if (userDto.getEmail() != null && userDto.getUuid() == null) {
+            queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
+        } else if (userDto.getEmail() != null && userDto.getUuid() != null ) {
+            queriedUser= userRepository.fetchOneByEmailAndUuid(userDto.getUuid(), userDto.getEmail());
+        } else {
+            // Throw exception if neither is provided
+            throw new Exception("Incomplete credentials.");
+        }
         // Return empty if no user found
         if (queriedUser != null) {
             // Encrypt input password with db salt
@@ -94,15 +111,21 @@ public class AuthenticationService {
         return new Session(user.getUser_id(), token, expiration);
     }
 
-    public int updateUserPassword(UserDto userDto, String newPassword) {
-        User storedUser = userRepository.fetchOneByUuid(userDto.getUuid());
+    public int updateUserPassword(UserDto userDto, String newPassword) throws Exception {
+        Optional<User> validatedUser = this.validateBasicCredentials(userDto);
 
+        if(validatedUser.isEmpty()) {
+            // FIXME:  Throw appropriate exception when user is not authenticated.
+            throw new Exception("User not authenticated");
+        }
+
+        // Generate new password only if user passed correct credentials
         byte[] newSalt = passwordEncoder.generateSalt();
         String encryptedNewPassword = passwordEncoder.encryptPassword(newPassword,
                 newSalt);
 
-        String storedPassword = storedUser.getPw_hash();
-        byte[] storedSalt = storedUser.getSalt();
+        String storedPassword = validatedUser.get().getPw_hash();
+        byte[] storedSalt = validatedUser.get().getSalt();
 
         return userRepository.updateUserPw(encryptedNewPassword,
                 newSalt,

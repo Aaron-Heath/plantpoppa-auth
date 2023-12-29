@@ -5,7 +5,9 @@ import com.plantpoppa.auth.models.UserDto;
 import com.plantpoppa.auth.services.AuthenticationService;
 import com.plantpoppa.auth.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -45,14 +47,19 @@ public class AuthResource {
 
     @PostMapping(value="/password",
             consumes=MediaType.APPLICATION_JSON_VALUE)
-    int updateUserPassword(@RequestBody Map<String, String> body) {
+    ResponseEntity<?> updateUserPassword(@RequestBody Map<String, String> body) {
         UserDto userDto= new UserDto.UserDtoBuilder()
                 .uuid(body.get("uuid"))
                 .password(body.get("password")).build();
 
         String newPassword = body.get("newPassword");
-
-        return authenticator.updateUserPassword(userDto, newPassword);
+    try {
+        int response = authenticator.updateUserPassword(userDto, newPassword);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    } catch(Exception e) {
+        return new ResponseEntity<String>("Unauthorized",
+                HttpStatus.UNAUTHORIZED);
+        }
     }
 
 }
