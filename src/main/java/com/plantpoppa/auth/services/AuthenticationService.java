@@ -58,12 +58,19 @@ public class AuthenticationService {
         User queriedUser;
 
         // Check for email and/or uuid
+        // UUID only validation
         if(userDto.getUuid() != null && userDto.getEmail() == null) {
             queriedUser = userRepository.fetchOneByUuid(userDto.getUuid());
+
+        // Email only validation
         } else if (userDto.getEmail() != null && userDto.getUuid() == null) {
             queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
+
+        // Email and UUID validation
         } else if (userDto.getEmail() != null && userDto.getUuid() != null ) {
             queriedUser= userRepository.fetchOneByEmailAndUuid(userDto.getUuid(), userDto.getEmail());
+
+        // Exception if neither is provided
         } else {
             // Throw exception if neither is provided
             throw new Exception("Incomplete credentials.");
