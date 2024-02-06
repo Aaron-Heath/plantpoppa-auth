@@ -13,6 +13,21 @@ import java.util.List;
 @Component
 public interface UserRepository  extends JpaRepository<User, Integer> {
 
+    @Transactional
+    @Modifying
+    @Query(value="INSERT INTO user_account (uuid, firstname, lastname, email, phone, zip, pw_hash, salt) " +
+            "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+    nativeQuery = true)
+    int createUser(String uuid,
+                   String firstname,
+                   String lastname,
+                   String email,
+                   String phone,
+                   String zip,
+                   String pw_hash,
+                   byte[] salt);
+
+
     @Query(value="SELECT * FROM user_account",
     nativeQuery = true)
     List<User> fetchAll();
