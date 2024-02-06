@@ -3,15 +3,13 @@ package com.plantpoppa.auth.services;
 import com.plantpoppa.auth.dao.UserRepository;
 import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserService {
@@ -25,6 +23,39 @@ public class UserService {
         this.authenticator = authenticator;
     }
 
+    public Optional<UserDto> createUser(UserDto userDto) {
+        System.out.println("User service creating new user");
+        // Create salt and hashed password
+        byte[] salt = authenticator.generateSalt();
+        String passwordHash = authenticator.encryptPassword(userDto.getPassword(), salt);
+
+        // Convert to user object
+        User newUser = new User.UserBuilder()
+                .firstname(userDto.getFirstname())
+                .lastname(userDto.getLastname())
+                .email(userDto.getEmail())
+                .phone(userDto.getPhone())
+                .zip(userDto.getZip())
+                .pw_hash(passwordHash)
+                .salt(salt).build();
+        // Insert newUser into DB
+        try {
+            int result = repository.createUser(
+                    newUser.getUuid(),
+                    newUser.getFirstname(),
+                    newUser.getLastname(),
+                    newUser.getEmail(),
+                    newUser.getPhone(),
+                    newUser.getZip(),
+                    newUser.getPw_hash(),
+                    newUser.getSalt());
+
+            return Optional.of(newUser.toDto());
+        } catch (Exception e) {
+            System.out.println(e);
+            return Optional.empty();
+        }
+    }
     public List<UserDto> findAllUsers(){
         List<User> users = this.repository.fetchAll();
 

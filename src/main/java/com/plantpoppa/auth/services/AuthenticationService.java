@@ -54,6 +54,13 @@ public class AuthenticationService {
         }
     }
 
+    public String encryptPassword(String password, byte[] salt) {
+        return passwordEncoder.encryptPassword(password, salt);
+    }
+    public byte[] generateSalt() {
+        return passwordEncoder.generateSalt();
+    }
+
     public Optional<User> validateBasicCredentials(UserDto userDto) throws Exception {
         User queriedUser;
 
