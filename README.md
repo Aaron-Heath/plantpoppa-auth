@@ -1,23 +1,26 @@
 # PlantPoppa Authorization
 ## Description
-This is a work-in-progress service that is a part of the PlantPoppa application. This service is a centralized authentication and authorization layer for the rest of the application. 
+This is a work-in-progress service that forms the centralized authentication and authorization layer from the PlantPoppa Application, ensuring secure user access management and data protection.
 
-This service has the following base endpoints:
-* `/auth` - receives requests to authenticate either basic credentials or tokens and sessions.
-* `/api` - receives requests to perform CRUD functions on user data.
+## Key Features
+* **Centralized Authentication:** Handles authentication requests for both basic credentials (username/password) and token-based authentication.
+* **User Data Management:** Provides CRUD (Create, Read, Update, Delete) functionality for managing user data.
+* **Secure Password Storage:** Employs password encryption using randomly generated salts that are stored alongside encrypted password for effective authentication during future login requests.
 
-PasswordEncoder can generate random salts and use those to encrypt user-provided credentials for storage. The salt is also stored in the database to allow for authentication after user creation. The AuthenticationService uses a user-provided email and password to query the database, pull the correct user credentials, and leverage the existing salt to encrpyt and compare the provided credentials against the stored credentials.
+**This service has the following base endpoints:**
+* `/auth` - Handles authentication requests
+* `/api` - Facilitates CRUD operations
+
+## Technology Stack
+<div>
+    <img src="https://raw.githubusercontent.com/devicons/devicon/55609aa5bd817ff167afce0d965585c92040787a/icons/java/java-original-wordmark.svg" width="50" height="50" alt="Java" title="Java"/>
+    <img  src="https://raw.githubusercontent.com/devicons/devicon/55609aa5bd817ff167afce0d965585c92040787a/icons/spring/spring-original-wordmark.svg" height="50" width="50" alt="Spring" title="Spring"/>
+</div>
+
+This application runs on the Spring Framework using Java. A previous implementation, built with Dropwizard can be found [here](https://github.com/Aaron-Heath/plantpoppa-auth/tree/dropwizard). The front end of the application is under development using ReactJS and can be found [here](https://github.com/Aaron-Heath/plantpoppa-ui).
+
+## Work-In-Progress Status
+
+Please note that this service is currently under active development and may not yet be suitable for production environments.
 
 
-
- 
----
-
-1. Run `mvn clean install` to build your application
-1. Start application with `java -jar target/plantpoppa-auth-1.0-SNAPSHOT.jar server config.yml`
-1. To check that your application is running enter url `http://localhost:8080`
-
-Health Check
----
-
-To see your applications health enter url `http://localhost:8081/healthcheck`
