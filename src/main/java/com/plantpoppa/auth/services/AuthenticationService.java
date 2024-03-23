@@ -1,18 +1,29 @@
 package com.plantpoppa.auth.services;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
+import com.plantpoppa.auth.models.JwtResponse;
 import com.plantpoppa.auth.models.Session;
 import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 import com.plantpoppa.auth.security.PasswordEncoder;
+
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
 @Component
@@ -22,6 +33,11 @@ public class AuthenticationService {
     private final SessionRepository sessionRepository;
     private final SecureRandom random = new SecureRandom();
 
+    private final String secretKey;
+    private final Algorithm algorithm;
+
+
+
     @Autowired
     public AuthenticationService(PasswordEncoder passwordEncoder,
                                  UserRepository userRepository,
@@ -29,9 +45,11 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
+        secretKey = System.getenv("JWT_SECRET");
+        algorithm = Algorithm.HMAC256(secretKey);
     }
 
-    public Optional<Session> basicAuth(UserDto userDto) {
+    public Optional<JwtResponse> basicAuth(UserDto userDto) {
         // Return empty if no user found
         Optional<User> validatedUser;
         try {
@@ -43,15 +61,29 @@ public class AuthenticationService {
         if (validatedUser.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(this.createSession(validatedUser.get()));
-//            // Encrypt input password with db salt
-//            final String encryptedInput = passwordEncoder.encryptPassword(
-//                    userDto.getPassword(),
-//                    queriedUser.getSalt());
-//            if (encryptedInput.equals(queriedUser.getPw_hash())) {
-//                return Optional.of(this.createSession(queriedUser));
-//            }
+            UserDto validUserDto = validatedUser.get().toDto();
+            String jwt = createToken(validUserDto);
+
+            // Build Response
+            return Optional.of(new JwtResponse(jwt,validUserDto));
         }
+    }
+
+    public String createToken(UserDto userDto) {
+        Date now  = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.HOUR_OF_DAY, 24);
+
+        Date expiration = calendar.getTime();
+
+        String jwt = JWT.create()
+                .withSubject(userDto.getEmail())
+                .withClaim("userId", userDto.getUuid())
+                .withIssuedAt(now)
+                .withExpiresAt(expiration)
+                .sign(algorithm);
+        return jwt;
     }
 
     public String encryptPassword(String password, byte[] salt) {
