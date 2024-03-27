@@ -1,5 +1,6 @@
 package com.plantpoppa.auth.resources;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.plantpoppa.auth.models.JwtResponse;
 import com.plantpoppa.auth.models.Session;
 import com.plantpoppa.auth.models.UserDto;
@@ -49,7 +50,7 @@ public class AuthResource {
 
     @PostMapping(value="/token",
     consumes=MediaType.APPLICATION_JSON_VALUE)
-    boolean tokenAuth(@RequestBody Session session) {
+    Optional<DecodedJWT> tokenAuth(@RequestBody Session session) {
         return authenticator.validateToken(session.getToken());
     }
 
