@@ -51,7 +51,7 @@ public class AuthResource {
     @PostMapping(value="/token",
     consumes=MediaType.APPLICATION_JSON_VALUE)
     Optional<DecodedJWT> tokenAuth(@RequestBody Session session) {
-        return authenticator.validateToken(session.getToken());
+        return authenticator.decodeToken(session.getToken());
     }
 
     @PostMapping(value="/password",

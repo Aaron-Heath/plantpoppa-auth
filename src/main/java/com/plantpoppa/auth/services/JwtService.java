@@ -75,4 +75,8 @@ public class JwtService {
         Date expiration = jwt.getExpiresAt();
         return expiration.before(now);
     }
+
+    public boolean isTokenValid(String token) {
+        return decodeJwt(token).isPresent();
+    }
 }

@@ -1,11 +1,14 @@
 package com.plantpoppa.auth.services;
 
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.plantpoppa.auth.models.UserDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mock;
+
+import java.util.Optional;
 
 public class JwtServiceTest {
     private UserDto testUserDto = new UserDto
@@ -42,6 +45,29 @@ public class JwtServiceTest {
         String expectedMessage = "No valid JWT found";
         String actualMessage = exception.getMessage();
         Assertions.assertEquals(expectedMessage, actualMessage);
+    }
 
+    @Test
+    public void decodeTokenValid() {
+        String freshToken = jwtService.createToken(testUserDto);
+        Optional<DecodedJWT> result = jwtService.decodeJwt(freshToken);
+
+        Assertions.assertTrue(result.get() instanceof DecodedJWT);
+    }
+
+    @Test
+    public void decodeTokenInvalid() {
+        Optional<DecodedJWT> result = jwtService.decodeJwt(invalidToken);
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void isTokenValidTrue() {
+        Assertions.assertTrue(jwtService.decodeJwt(expiredToken).isPresent());
+    }
+
+    @Test
+    public void isTokenValidFalse() {
+        Assertions.assertFalse(jwtService.decodeJwt(invalidToken).isPresent());
     }
 }

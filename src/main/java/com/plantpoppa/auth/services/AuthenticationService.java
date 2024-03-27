@@ -4,7 +4,6 @@ package com.plantpoppa.auth.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Optional;
 
 @Component
@@ -121,17 +118,8 @@ public class AuthenticationService {
 
     }
 
-    public Optional<DecodedJWT> validateToken(String token) {
-        DecodedJWT decodedJWT;
-        try {
-            decodedJWT = verifier.verify(token);
-        } catch (JWTVerificationException e) {
-            System.out.println(e.getMessage());
-            return Optional.empty();
-        }
-
-
-        return Optional.ofNullable(decodedJWT);
+    public Optional<DecodedJWT> decodeToken(String token) {
+        return jwtService.decodeJwt(token);
     }
 
     Session createSession(User user) {
