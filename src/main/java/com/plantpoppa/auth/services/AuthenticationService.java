@@ -2,7 +2,10 @@ package com.plantpoppa.auth.services;
 
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
@@ -32,6 +35,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final SecureRandom random = new SecureRandom();
+    private final JWTVerifier verifier;
 
     private final String secretKey;
     private final Algorithm algorithm;
@@ -45,8 +49,11 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
-        secretKey = System.getenv("JWT_SECRET");
-        algorithm = Algorithm.HMAC256(secretKey);
+        this.secretKey = System.getenv("JWT_SECRET");
+        this.algorithm = Algorithm.HMAC256(secretKey);
+        this.verifier = JWT.require(algorithm)
+                .withIssuer(System.getenv("JWT_ISSUER"))
+                .build();
     }
 
     public Optional<JwtResponse> basicAuth(UserDto userDto) {
@@ -82,6 +89,7 @@ public class AuthenticationService {
                 .withClaim("userId", userDto.getUuid())
                 .withIssuedAt(now)
                 .withExpiresAt(expiration)
+                .withIssuer(System.getenv("JWT_ISSUER"))
                 .sign(algorithm);
         return jwt;
     }
@@ -128,15 +136,27 @@ public class AuthenticationService {
 
     }
 
-    public boolean validateToken(String token) {
-        System.out.println(token);
-        Session validSession = sessionRepository.fetchOneValidToken(token);
-
-        // Return false if no valid session found. Else return true.
-        if(validSession == null) {
-            return false;
+    public Optional<DecodedJWT> validateToken(String token) {
+        DecodedJWT decodedJWT;
+        try {
+            decodedJWT = verifier.verify(token);
+        } catch (JWTVerificationException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
         }
-        return true;
+
+
+        return Optional.ofNullable(decodedJWT);
+
+
+//        System.out.println(token);
+//        Session validSession = sessionRepository.fetchOneValidToken(token);
+//
+//        // Return false if no valid session found. Else return true.
+//        if(validSession == null) {
+//            return false;
+//        }
+//        return true;
     }
 
     Session createSession(User user) {
