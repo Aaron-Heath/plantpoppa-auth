@@ -41,7 +41,8 @@ public class JwtFilter implements Filter {
                          ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)  request;
-        // Skip filter if path is /basic
+
+        // Skip filter if path is auth/basic
         if(req.getRequestURI().equals("/auth/basic")) {
             chain.doFilter(request, response);
             return;
@@ -49,8 +50,6 @@ public class JwtFilter implements Filter {
 
         // Get authorization token from authorization header
         Optional<String> tokenParam = Optional.ofNullable(req.getHeader("AUTHORIZATION")); // Expecting Bearer <TOKEN>
-        System.out.println(System.getenv("JWT_ADMIN_ROLE"));
-
         if(tokenParam.isEmpty()) {
             sendUnauthorizedResponse(response);
             return;
@@ -92,7 +91,6 @@ public class JwtFilter implements Filter {
     }
 
     private void sendExpiredResponse(ServletResponse response) {
-//        System.out.println("Sending Expired Message");
         HttpServletResponse res = (HttpServletResponse) response;
 
         res.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -107,7 +105,6 @@ public class JwtFilter implements Filter {
     }
 
     private void sendForbiddenResponse(ServletResponse response) {
-//        System.out.println("Sending Forbidden Message");
         HttpServletResponse res = (HttpServletResponse) response;
 
         res.setStatus(HttpStatus.FORBIDDEN.value());
@@ -121,7 +118,7 @@ public class JwtFilter implements Filter {
     }
 
     private void sendUnauthorizedResponse(ServletResponse response) {
-//        System.out.println("Sending Unauthorized Message");
+
         HttpServletResponse res = (HttpServletResponse) response;
 
         res.setStatus(HttpStatus.UNAUTHORIZED.value());
