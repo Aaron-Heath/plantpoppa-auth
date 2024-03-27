@@ -6,7 +6,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
 import com.plantpoppa.auth.models.JwtResponse;
@@ -15,15 +14,12 @@ import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 import com.plantpoppa.auth.security.PasswordEncoder;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +30,7 @@ public class AuthenticationService {
     public final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
+    private final JwtService jwtService;
     private final SecureRandom random = new SecureRandom();
     private final JWTVerifier verifier;
 
@@ -45,10 +42,12 @@ public class AuthenticationService {
     @Autowired
     public AuthenticationService(PasswordEncoder passwordEncoder,
                                  UserRepository userRepository,
-                                 SessionRepository sessionRepository) {
+                                 SessionRepository sessionRepository,
+                                 JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
+        this.jwtService = jwtService;
         this.secretKey = System.getenv("JWT_SECRET");
         this.algorithm = Algorithm.HMAC256(secretKey);
         this.verifier = JWT.require(algorithm)
@@ -77,21 +76,7 @@ public class AuthenticationService {
     }
 
     public String createToken(UserDto userDto) {
-        Date now  = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.HOUR_OF_DAY, 24);
-
-        Date expiration = calendar.getTime();
-
-        String jwt = JWT.create()
-                .withSubject(userDto.getEmail())
-                .withClaim("userId", userDto.getUuid())
-                .withIssuedAt(now)
-                .withExpiresAt(expiration)
-                .withIssuer(System.getenv("JWT_ISSUER"))
-                .sign(algorithm);
-        return jwt;
+        return jwtService.createToken(userDto);
     }
 
     public String encryptPassword(String password, byte[] salt) {
@@ -147,16 +132,6 @@ public class AuthenticationService {
 
 
         return Optional.ofNullable(decodedJWT);
-
-
-//        System.out.println(token);
-//        Session validSession = sessionRepository.fetchOneValidToken(token);
-//
-//        // Return false if no valid session found. Else return true.
-//        if(validSession == null) {
-//            return false;
-//        }
-//        return true;
     }
 
     Session createSession(User user) {
