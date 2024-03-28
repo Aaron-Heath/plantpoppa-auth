@@ -70,6 +70,7 @@ public class UserService {
                             .email(user.getEmail())
                             .phone(user.getPhone())
                             .zip(user.getZip())
+                            .role(user.getRole())
                             .build()
             );
         });

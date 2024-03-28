@@ -15,8 +15,8 @@ public interface UserRepository  extends JpaRepository<User, Integer> {
 
     @Transactional
     @Modifying
-    @Query(value="INSERT INTO user_account (uuid, firstname, lastname, email, phone, zip, pw_hash, salt) " +
-            "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+    @Query(value="INSERT INTO user_account (uuid, firstname, lastname, email, phone, zip, pw_hash, salt, role) " +
+            "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, user)",
     nativeQuery = true)
     int createUser(String uuid,
                    String firstname,

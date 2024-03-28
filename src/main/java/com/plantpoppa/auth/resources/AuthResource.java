@@ -1,5 +1,7 @@
 package com.plantpoppa.auth.resources;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.plantpoppa.auth.models.JwtResponse;
 import com.plantpoppa.auth.models.Session;
 import com.plantpoppa.auth.models.UserDto;
 import com.plantpoppa.auth.services.AuthenticationService;
@@ -35,14 +37,21 @@ public class AuthResource {
     @PostMapping(value = "/basic",
             consumes= MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    Optional<Session> basicAuth(@RequestBody UserDto userDto) {
-        return authenticator.basicAuth(userDto);
+    ResponseEntity<?> basicAuth(@RequestBody UserDto userDto) {
+        Optional<JwtResponse> authenticationResponse = authenticator.basicAuth(userDto);
+        if (authenticationResponse.isPresent()) {
+            return new ResponseEntity<>(authenticationResponse,
+                    HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+
     }
 
     @PostMapping(value="/token",
     consumes=MediaType.APPLICATION_JSON_VALUE)
-    boolean tokenAuth(@RequestBody Session session) {
-        return authenticator.validateToken(session.getToken());
+    Optional<DecodedJWT> tokenAuth(@RequestBody Session session) {
+        return authenticator.decodeToken(session.getToken());
     }
 
     @PostMapping(value="/password",

@@ -1,13 +1,20 @@
 package com.plantpoppa.auth.services;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
+import com.plantpoppa.auth.models.JwtResponse;
 import com.plantpoppa.auth.models.Session;
 import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 import com.plantpoppa.auth.security.PasswordEncoder;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -20,18 +27,32 @@ public class AuthenticationService {
     public final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
+    private final JwtService jwtService;
     private final SecureRandom random = new SecureRandom();
+    private final JWTVerifier verifier;
+
+    private final String secretKey;
+    private final Algorithm algorithm;
+
+
 
     @Autowired
     public AuthenticationService(PasswordEncoder passwordEncoder,
                                  UserRepository userRepository,
-                                 SessionRepository sessionRepository) {
+                                 SessionRepository sessionRepository,
+                                 JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
+        this.jwtService = jwtService;
+        this.secretKey = System.getenv("JWT_SECRET");
+        this.algorithm = Algorithm.HMAC256(secretKey);
+        this.verifier = JWT.require(algorithm)
+                .withIssuer(System.getenv("JWT_ISSUER"))
+                .build();
     }
 
-    public Optional<Session> basicAuth(UserDto userDto) {
+    public Optional<JwtResponse> basicAuth(UserDto userDto) {
         // Return empty if no user found
         Optional<User> validatedUser;
         try {
@@ -43,15 +64,16 @@ public class AuthenticationService {
         if (validatedUser.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(this.createSession(validatedUser.get()));
-//            // Encrypt input password with db salt
-//            final String encryptedInput = passwordEncoder.encryptPassword(
-//                    userDto.getPassword(),
-//                    queriedUser.getSalt());
-//            if (encryptedInput.equals(queriedUser.getPw_hash())) {
-//                return Optional.of(this.createSession(queriedUser));
-//            }
+            UserDto validUserDto = validatedUser.get().toDto();
+            String jwt = createToken(validUserDto);
+
+            // Build Response
+            return Optional.of(new JwtResponse(jwt,validUserDto));
         }
+    }
+
+    public String createToken(UserDto userDto) {
+        return jwtService.createToken(userDto);
     }
 
     public String encryptPassword(String password, byte[] salt) {
@@ -96,15 +118,8 @@ public class AuthenticationService {
 
     }
 
-    public boolean validateToken(String token) {
-        System.out.println(token);
-        Session validSession = sessionRepository.fetchOneValidToken(token);
-
-        // Return false if no valid session found. Else return true.
-        if(validSession == null) {
-            return false;
-        }
-        return true;
+    public Optional<DecodedJWT> decodeToken(String token) {
+        return jwtService.decodeJwt(token);
     }
 
     Session createSession(User user) {

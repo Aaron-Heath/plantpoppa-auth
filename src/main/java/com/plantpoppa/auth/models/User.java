@@ -3,6 +3,7 @@ package com.plantpoppa.auth.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.UUID;
 
@@ -17,10 +18,11 @@ public class User {
     private String phone;
     private String zip;
     private byte[] salt;
+    private String role;
 
 
     // Full constructor
-    public User(int user_id, String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
+    public User(int user_id, String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt, String role) {
         this.user_id = user_id;
         // Add if condition for UserBuilder user creation
         if(uuid == null) {
@@ -35,10 +37,11 @@ public class User {
         this.phone = phone;
         this.zip = zip;
         this.salt = salt;
+        this.role = role;
     }
 
     // Constructor without id
-    public User(String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt) {
+    public User(String uuid, String email, String pw_hash, String firstname, String lastname, String phone, String zip, byte[] salt, String role) {
         this.uuid = uuid;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -47,15 +50,17 @@ public class User {
         this.phone = phone;
         this.zip = zip;
         this.salt = salt;
+        this.role = role;
     }
     //Constructor without pw_hash and without salt
-    public User(int user_id, String email, String firstname, String lastname, String phone, String zip) {
+    public User(int user_id, String email, String firstname, String lastname, String phone, String zip, String role) {
         this.user_id = user_id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.phone = phone;
         this.zip = zip;
+        this.role = role;
     }
 
     //Constructor with email/password
@@ -74,7 +79,8 @@ public class User {
                 .lastname(this.getLastname())
                 .email(this.getEmail())
                 .phone(this.getPhone())
-                .zip(this.getZip()).build();
+                .zip(this.getZip())
+                .role(this.getRole()).build();
     }
 
     public int getUser_id() {
@@ -149,6 +155,14 @@ public class User {
         this.salt = salt;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public UserBuilder toBuilder() {
         return new UserBuilder()
                 .user_id(this.user_id)
@@ -172,6 +186,7 @@ public class User {
         private String phone;
         private String zip;
         private byte[] salt;
+        private String role;
 
         // Empty Constructor
         public UserBuilder() {
@@ -231,7 +246,8 @@ public class User {
                     this.lastname,
                     this.phone,
                     this.zip,
-                    this.salt);
+                    this.salt,
+                    this.role);
         }
 
 
