@@ -8,8 +8,9 @@ public class UserDto {
     private String password;
     private String phone;
     private String zip;
+    private String role;
 
-    public UserDto(String uuid, String firstname, String lastname, String email, String password, String phone, String zip) {
+    public UserDto(String uuid, String firstname, String lastname, String email, String password, String phone, String zip, String role) {
         this.uuid = uuid;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -17,6 +18,7 @@ public class UserDto {
         this.password = password;
         this.phone = phone;
         this.zip = zip;
+        this.role = role;
     }
 
     // Default constructor
@@ -79,6 +81,13 @@ public class UserDto {
         this.zip = zip;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public static class UserDtoBuilder{
         private String uuid;
@@ -88,6 +97,7 @@ public class UserDto {
         private String password;
         private String phone;
         private String zip;
+        private String role;
 
         public UserDtoBuilder() {
         }
@@ -127,6 +137,11 @@ public class UserDto {
             return this;
         }
 
+        public  UserDtoBuilder role(String role) {
+            this.role = role;
+            return this;
+        }
+
         public UserDto build() {
             return new UserDto(
                     this.uuid,
@@ -135,7 +150,8 @@ public class UserDto {
                     this.email,
                     this.password,
                     this.phone,
-                    this.zip
+                    this.zip,
+                    this.role
             );
         }
 
