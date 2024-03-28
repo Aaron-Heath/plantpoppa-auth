@@ -19,6 +19,7 @@ public class JwtServiceTest {
             .lastname("Bar")
             .phone("9999999999")
             .zip("19038")
+            .role("user")
             .build();
     private String expiredToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYWZmeS5kdWNrQGdtYWlsLmNvbSIsImlzcyI6InBwc2VjNTAwNSIsImV4cCI6MTcxMTU4NzYzNiwidXNlcklkIjoiNTE0MTYxZmUtYTE0MC00NzI2LWFlYmUtOGYxMmFkZDJhOTNiIiwiaWF0IjoxNzExNTAxMjM2fQ.ULlx3M_l9q61thsxpkEU4OibFcLY8ApBnCTfxi8TPm0";
     private String invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
@@ -63,7 +64,8 @@ public class JwtServiceTest {
 
     @Test
     public void isTokenValidTrue() {
-        Assertions.assertTrue(jwtService.decodeJwt(expiredToken).isPresent());
+        String freshToken = jwtService.createToken(testUserDto);
+        Assertions.assertTrue(jwtService.decodeJwt(freshToken).isPresent());
     }
 
     @Test
