@@ -36,11 +36,10 @@ public class JwtService {
 
         Date expiration = calendar.getTime();
 
-        // TODO: Replace user role with dynamically generated from Dto
         return JWT.create()
                 .withSubject(userDto.getEmail())
                 .withClaim("userId", userDto.getUuid())
-                .withClaim("role", "user")
+                .withClaim("role", userDto.getRole())
                 .withIssuedAt(now)
                 .withExpiresAt(expiration)
                 .withIssuer(issuer)

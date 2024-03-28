@@ -86,7 +86,6 @@ public class JwtFilter implements Filter {
             sendForbiddenResponse(response);
             return;
         }
-        // continue
         chain.doFilter(request, response);
     }
 

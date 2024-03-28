@@ -33,7 +33,7 @@ public class JwtResponse {
         this.email = userDto.getEmail();
         this.firstname = userDto.getFirstname();
         this.lastname = userDto.getLastname();
-        this.role = "user";
+        this.role = userDto.getRole();
     }
 
     public String getJwt() {
