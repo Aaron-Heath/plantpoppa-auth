@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.swing.text.html.Option;
 import java.io.IOException;
@@ -54,9 +55,8 @@ public class JwtFilter implements Filter {
             sendUnauthorizedResponse(response);
             return;
         }
-
-        final String token = tokenParam.get();
-
+        // Expecting
+        final String token = StringUtils.replace(tokenParam.get(),"Bearer ","");
         // If decoded jwt returns an empty optional, send unauthorized response.
         Optional<DecodedJWT> decodedJwtOptional = jwtService.decodeJwt(token);
         if(decodedJwtOptional.isEmpty()) {
