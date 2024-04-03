@@ -26,7 +26,8 @@ public class JwtFilter implements Filter {
     );
 
     private final List<String> noAuthPath = List.of(
-            "/auth/basic"
+            "/auth/basic",
+            "/api/user/register"
     );
 
     @Autowired
@@ -43,8 +44,8 @@ public class JwtFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)  request;
 
-        // Skip filter if path is auth/basic
-        if(req.getRequestURI().equals("/auth/basic")) {
+        // Skip filter if path does not require authentication
+        if(noAuthPath.contains(req.getRequestURI())) {
             chain.doFilter(request, response);
             return;
         }
