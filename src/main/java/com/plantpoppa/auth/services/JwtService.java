@@ -40,6 +40,8 @@ public class JwtService {
                 .withSubject(userDto.getEmail())
                 .withClaim("userId", userDto.getUuid())
                 .withClaim("role", userDto.getRole())
+                .withClaim("firstName", userDto.getFirstname())
+                .withClaim("lastName", userDto.getLastname())
                 .withIssuedAt(now)
                 .withExpiresAt(expiration)
                 .withIssuer(issuer)
