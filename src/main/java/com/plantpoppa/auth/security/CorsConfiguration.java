@@ -13,7 +13,9 @@ public class CorsConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("https://plantpoppa.com"); // enable CORS for plantpoppa.com
+                registry.addMapping("/**")
+                        .allowedOrigins("https://plantpoppa.com") // enable CORS for plantpoppa.com
+                        .allowedOrigins("http://localhost:5173/");
             }
         };
     }

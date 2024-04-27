@@ -12,10 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -39,10 +36,10 @@ public class UserResource {
         Optional<UserDto> createdUser = userService.createUser(userDto);
 
         if(createdUser.isEmpty()) {
-            Map<String, String> response = null;
-            response.put("message", "Something went wrong");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "A user with this email already exists.");
 
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(createdUser,

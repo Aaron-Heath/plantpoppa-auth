@@ -5,6 +5,7 @@ import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class UserService {
                     newUser.getSalt());
 
             return Optional.of(newUser.toDto());
-        } catch (Exception e) {
+        } catch (DataIntegrityViolationException e) {
             System.out.println(e);
             return Optional.empty();
         }
