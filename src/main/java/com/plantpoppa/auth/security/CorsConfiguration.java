@@ -14,8 +14,7 @@ public class CorsConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://plantpoppa.com") // enable CORS for plantpoppa.com
-                        .allowedOrigins("http://localhost:5173/");
+                        .allowedOrigins("https://plantpoppa.com", "http://localhost:5173/"); // enable CORS for plantpoppa.com and localhost
             }
         };
     }
