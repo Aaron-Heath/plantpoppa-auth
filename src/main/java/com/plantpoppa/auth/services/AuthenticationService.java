@@ -122,6 +122,19 @@ public class AuthenticationService {
         return jwtService.decodeJwt(token);
     }
 
+    public Optional<User> validateTokenProvideUser(String token) {
+        // If token is valid, query for user. Return user.
+        Optional<DecodedJWT> decodedJwt = decodeToken(token);
+        User validatedUser;
+        if (decodedJwt.isPresent()) {
+            String uuid = decodedJwt.get().getClaim("userId").asString();
+            validatedUser = userRepository.fetchOneByUuid(uuid);
+
+            return Optional.ofNullable(validatedUser);
+        }
+        return Optional.empty();
+    }
+
     Session createSession(User user) {
         //  Generate token
         // https://stackoverflow.com/questions/13992972/how-to-create-a-authentication-token-using-java
