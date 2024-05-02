@@ -7,10 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
-import com.plantpoppa.auth.models.JwtResponse;
-import com.plantpoppa.auth.models.Session;
-import com.plantpoppa.auth.models.User;
-import com.plantpoppa.auth.models.UserDto;
+import com.plantpoppa.auth.models.*;
 import com.plantpoppa.auth.security.PasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +30,7 @@ public class AuthenticationService {
 
     private final String secretKey;
     private final Algorithm algorithm;
+    private static final int secretLength = 32;
 
 
 
@@ -82,6 +80,11 @@ public class AuthenticationService {
     public byte[] generateSalt() {
         return passwordEncoder.generateSalt();
     }
+    public String generateSecret() {
+    byte[] bytes = new byte[secretLength];
+    random.nextBytes(bytes);
+    return Base64.getUrlEncoder().encodeToString(bytes);
+}
 
     public Optional<User> validateBasicCredentials(UserDto userDto) throws Exception {
         User queriedUser;
