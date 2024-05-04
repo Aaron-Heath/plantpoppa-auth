@@ -118,4 +118,21 @@ public class AuthResource {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping(value="/service/refresh-token",
+    consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> refreshServiceToken(@RequestBody InternalClient service) {
+        HashMap<String, String> body = new HashMap<>();
+        try {
+            body = authenticator.refreshServiceToken(service);
+            return new ResponseEntity<>(body, HttpStatus.OK);
+        } catch (CredentialException e) {
+            body.put("message", e.getMessage());
+            return new ResponseEntity<>(body,HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            body.put("message", "Something went wrong. Please check logs.");
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
