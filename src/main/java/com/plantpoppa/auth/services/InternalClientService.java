@@ -21,6 +21,14 @@ public class InternalClientService {
         this.authenticator = authenticator;
     }
 
+    /**
+     * Creates and registers a new service follows a separate authorization and authentication flow.
+     *
+     * THIS IS THE ONLY TIME THE CLIENT SECRET IS ACCESSIBLE IN PLAINTEXT. IT MUST BE STORED FOR USE LATER.
+     *
+     * @param service as instance of InternalClient
+     * @return HashMap with the clientSecret and clientId.
+     */
     public HashMap<String, String> registerApplicationService(InternalClient service) {
         System.out.println("Registering new service");
         service.setSalt(authenticator.generateSalt());

@@ -130,6 +130,11 @@ public class AuthenticationService {
 
     }
 
+    /**
+     * Validates internal service credentials. Returns a client if credentials are valid.
+     * Throws a credential exception if they are not.
+     * @param service with String uuid and String secret.
+     * */
     public InternalClient validateServiceSecret(InternalClient service) throws CredentialException{
 
         if(service.getUuid().isEmpty()) {
