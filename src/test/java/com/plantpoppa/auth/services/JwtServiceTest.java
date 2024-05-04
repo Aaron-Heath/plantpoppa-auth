@@ -5,8 +5,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.plantpoppa.auth.models.UserDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions.*;
-import org.mockito.Mock;
 
 import java.util.Optional;
 
@@ -27,7 +25,7 @@ public class JwtServiceTest {
 
     @Test
     public void testIsTokenExpiredFalse() {
-        String freshToken = jwtService.createToken(testUserDto);
+        String freshToken = jwtService.createUserToken(testUserDto);
         Assertions.assertFalse(jwtService.isTokenExpired(freshToken));
     }
 
@@ -50,7 +48,7 @@ public class JwtServiceTest {
 
     @Test
     public void decodeTokenValid() {
-        String freshToken = jwtService.createToken(testUserDto);
+        String freshToken = jwtService.createUserToken(testUserDto);
         Optional<DecodedJWT> result = jwtService.decodeJwt(freshToken);
 
         Assertions.assertTrue(result.get() instanceof DecodedJWT);
@@ -64,7 +62,7 @@ public class JwtServiceTest {
 
     @Test
     public void isTokenValidTrue() {
-        String freshToken = jwtService.createToken(testUserDto);
+        String freshToken = jwtService.createUserToken(testUserDto);
         Assertions.assertTrue(jwtService.decodeJwt(freshToken).isPresent());
     }
 

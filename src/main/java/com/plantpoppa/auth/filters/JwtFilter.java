@@ -22,7 +22,8 @@ import java.util.*;
 @Order(2)
 public class JwtFilter implements Filter {
     private final List<String> adminPaths = List.of(
-            "/api/user/"
+            "/api/user/",
+            "/service/register"
     );
 
     private final List<String> noAuthPath = List.of(

@@ -1,6 +1,6 @@
 package com.plantpoppa.auth.dao;
 
-import com.plantpoppa.auth.models.ApplicationService;
+import com.plantpoppa.auth.models.InternalClient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface ApplicationServiceRepository extends JpaRepository<ApplicationService, Integer> {
+public interface InternalClientRepository extends JpaRepository<InternalClient, Integer> {
 
-    @Query("SELECT as FROM ApplicationService as WHERE as.uuid = :uuid")
-    Optional<ApplicationService> fetchOneByUuid(@Param("uuid") String uuid);
+    @Query("SELECT ic FROM InternalClient ic WHERE ic.uuid = :uuid")
+    Optional<InternalClient> fetchOneByUuid(@Param("uuid") String uuid);
 
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO application_service (" +
+    @Query(value = "INSERT INTO internal_client (" +
             "uuid, title, secret, salt) VALUES (" +
             ":uuid, :title, :secret, :salt)",
     nativeQuery = true)

@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import javax.security.auth.login.CredentialException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -90,6 +90,32 @@ public class AuthResource {
         return new ResponseEntity<String>("Unauthorized",
                 HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PostMapping(value="/service/validate-secret",
+    consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> validateSecret(@RequestBody InternalClient service) {
+        InternalClient foundService;
+        Map<String, String> response;
+
+        // Try to get valid service based on credentials provided
+        try {
+            foundService = authenticator.validateServiceSecret(service);
+        } catch (CredentialException e) {
+            // Catch error thrown by authenticator if bad credentials are provided.
+            response = new HashMap<>();
+            response.put("message",
+                    e.getMessage());
+            return new ResponseEntity<>(response,
+                    HttpStatus.UNAUTHORIZED);
+        }
+
+        String serviceToken = authenticator.createServiceToken(foundService);
+        response = new HashMap<>();
+
+        response.put("jwt",serviceToken);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
