@@ -4,25 +4,24 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.UUID;
 
 @Entity
-@Table(name="application_service")
-public class ApplicationService {
+@Table(name="internal_client")
+public class InternalClient {
     @Column(name="service_id")
     private @Id int serviceId;
-    private String uuid;
+    private String uuid = String.valueOf(UUID.randomUUID());
     private String title;
     private String secret;
     private byte[] salt;
 
-    public ApplicationService(int serviceId,
-                              String uuid,
-                              String title,
-                              String secret,
-                              byte[] salt) {
+    public InternalClient(int serviceId,
+                          String uuid,
+                          String title,
+                          String secret,
+                          byte[] salt) {
         this.serviceId = serviceId;
         if(uuid == null) {
             this.uuid = String.valueOf(UUID.randomUUID());
@@ -34,7 +33,7 @@ public class ApplicationService {
         this.salt = salt;
     }
 
-    public ApplicationService() {
+    public InternalClient() {
     }
 
     public int getServiceId() {
