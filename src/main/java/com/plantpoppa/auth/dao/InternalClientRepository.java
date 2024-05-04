@@ -19,12 +19,13 @@ public interface InternalClientRepository extends JpaRepository<InternalClient, 
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO internal_client (" +
-            "uuid, title, secret, salt) VALUES (" +
-            ":uuid, :title, :secret, :salt)",
+            "uuid, title, secret, salt, refresh_token) VALUES (" +
+            ":uuid, :title, :secret, :salt, :refresh_token)",
     nativeQuery = true)
     int createApplicationService(
             @Param("uuid") String uuid,
             @Param("title") String title,
             @Param("secret") String secret,
-            @Param("salt") byte[] salt);
+            @Param("salt") byte[] salt,
+            @Param("refresh_token") String refreshToken);
 }

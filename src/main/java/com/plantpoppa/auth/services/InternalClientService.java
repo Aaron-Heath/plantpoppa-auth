@@ -31,9 +31,14 @@ public class InternalClientService {
      */
     public HashMap<String, String> registerApplicationService(InternalClient service) {
         System.out.println("Registering new service");
+
+        // Generate and set refresh token
+        String refreshToken = authenticator.generateSecret();
+        service.setRefreshToken(refreshToken);
+
+        // Generate and store salt and salted and hashed secret
         service.setSalt(authenticator.generateSalt());
         String clearSecret = authenticator.generateSecret();
-
         service.setSecret(authenticator.encryptPassword(clearSecret,
                 service.getSalt()));
 
@@ -44,11 +49,17 @@ public class InternalClientService {
                     service.getUuid(),
                     service.getTitle(),
                     service.getSecret(),
-                    service.getSalt()
+                    service.getSalt(),
+                    service.getRefreshToken()
             );
             System.out.println("Service registered");
+
+            // Return map with clearSecret (for use in client system),
+            // clientId (uuid of service)
+            // refreshToken (for token expiration)
             result.put("clientSecret", clearSecret);
             result.put("clientId", service.getUuid());
+            result.put("refreshToken", service.getRefreshToken());
             return result;
     }
 }

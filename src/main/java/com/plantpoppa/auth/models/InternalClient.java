@@ -17,12 +17,17 @@ public class InternalClient {
     private String secret;
     private byte[] salt;
 
+    @Column(name="refresh_token")
+    private String refreshToken;
+
     public InternalClient(int serviceId,
                           String uuid,
                           String title,
                           String secret,
-                          byte[] salt) {
+                          byte[] salt,
+                          String refreshToken) {
         this.serviceId = serviceId;
+        this.refreshToken = refreshToken;
         if(uuid == null) {
             this.uuid = String.valueOf(UUID.randomUUID());
         } else {
@@ -74,5 +79,13 @@ public class InternalClient {
 
     public void setSalt(byte[] salt) {
         this.salt = salt;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
