@@ -19,6 +19,7 @@ import javax.security.auth.login.CredentialException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Component
@@ -79,8 +80,6 @@ public class AuthenticationService {
         return jwtService.createUserToken(userDto);
     }
 
-    public String createServiceToken(InternalClient service) {return jwtService.createServiceToken(service);}
-
     public String encryptPassword(String password, byte[] salt) {
         return passwordEncoder.encryptPassword(password, salt);
     }
@@ -128,40 +127,6 @@ public class AuthenticationService {
         }
         return Optional.empty();
 
-    }
-
-    /**
-     * Validates internal service credentials. Returns a client if credentials are valid.
-     * Throws a credential exception if they are not.
-     * @param service with String uuid and String secret.
-     * */
-    public InternalClient validateServiceSecret(InternalClient service) throws CredentialException{
-
-        if(service.getUuid().isEmpty()) {
-            throw new CredentialException("Missing service uuid");
-        }
-
-        if(service.getSecret().isEmpty()) {
-            throw new CredentialException("Missing service secret");
-        }
-
-        final String clearSecret = service.getSecret();
-        final Optional<InternalClient> queriedService = clientRepository.fetchOneByUuid(service.getUuid());
-        // If no service found with uuid
-        if(queriedService.isEmpty()) {
-            throw new CredentialException("Invalid uuid provided");
-        }
-
-        final InternalClient foundService = queriedService.get();
-
-        // hash clear secret and compare with queried secret
-        final String hashedSecret = encryptPassword(clearSecret, foundService.getSalt());
-
-        if(!hashedSecret.equals(foundService.getSecret())) {
-            throw new CredentialException("Invalid Secret provided");
-        }
-
-        return foundService;
     }
 
     public Optional<DecodedJWT> decodeToken(String token) {
@@ -219,5 +184,80 @@ public class AuthenticationService {
                 newSalt,
                 storedPassword,
                 storedSalt);
+    }
+
+    // --------- Internal Service Methods --------- \\
+
+    public String createServiceToken(InternalClient service) {return jwtService.createServiceToken(service);}
+
+    /**
+     * @return HashMap with {
+     *     newRefreshToken,
+     *     newJwt
+     * }
+     * */
+    public HashMap<String, String> refreshServiceToken(InternalClient service) throws CredentialException {
+        HashMap<String, String> result = new HashMap<>();
+
+        // Validate credentials provided by the service. Throws an error if invalid.
+        InternalClient foundClient = this.validateServiceSecret(service);
+
+        // If the refresh tokens don't match, throw CredentialException
+        if(!service.getRefreshToken().equals(foundClient.getRefreshToken())) {
+            throw new CredentialException("Invalid Refresh token");
+        }
+
+        // Generate new refresh token and jwt. Store in result
+        String newRefreshToken = this.generateSecret();
+        clientRepository.updateInternalClientRefreshToken(newRefreshToken, foundClient.getServiceId());
+        String newJwt = this.createServiceToken(foundClient);
+
+        result.put("refreshToken", newRefreshToken);
+        result.put("jwt", newJwt);
+
+        return result;
+
+
+
+
+
+
+
+
+
+    }
+
+    /**
+     * Validates internal service credentials. Returns a client if credentials are valid.
+     * Throws a credential exception if they are not.
+     * @param service with String uuid and String secret.
+     * */
+    public InternalClient validateServiceSecret(InternalClient service) throws CredentialException{
+
+        if(service.getUuid().isEmpty()) {
+            throw new CredentialException("Missing service uuid");
+        }
+
+        if(service.getSecret().isEmpty()) {
+            throw new CredentialException("Missing service secret");
+        }
+
+        final String clearSecret = service.getSecret();
+        final Optional<InternalClient> queriedService = clientRepository.fetchOneByUuid(service.getUuid());
+        // If no service found with uuid
+        if(queriedService.isEmpty()) {
+            throw new CredentialException("Invalid uuid provided");
+        }
+
+        final InternalClient foundService = queriedService.get();
+
+        // hash clear secret and compare with queried secret
+        final String hashedSecret = encryptPassword(clearSecret, foundService.getSalt());
+
+        if(!hashedSecret.equals(foundService.getSecret())) {
+            throw new CredentialException("Invalid Secret provided");
+        }
+
+        return foundService;
     }
 }

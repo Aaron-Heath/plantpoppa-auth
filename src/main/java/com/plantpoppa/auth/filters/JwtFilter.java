@@ -28,7 +28,12 @@ public class JwtFilter implements Filter {
 
     private final List<String> noAuthPath = List.of(
             "/auth/basic",
-            "/api/user/register"
+            "/api/user/register",
+            "/auth/service/refresh-token"
+    );
+
+    private final List<String> servicePaths = List.of(
+            "/auth/service/validate-token"
     );
 
     @Autowired
@@ -68,7 +73,7 @@ public class JwtFilter implements Filter {
 
         DecodedJWT decodedToken = decodedJwtOptional.get();
 
-        final String userRole = decodedToken.getClaim("role").asString();
+        final String requesterRole = decodedToken.getClaim("role").asString();
         final String requestURI = req.getRequestURI();
 
         // Check if token is valid
@@ -84,11 +89,18 @@ public class JwtFilter implements Filter {
         }
 
         // Check if path is for admins and user is admin
-        if(adminPaths.contains(requestURI) && !userRole.equals(System.getenv("JWT_ADMIN_ROLE"))) {
+        if(adminPaths.contains(requestURI) && !requesterRole.equals(System.getenv("JWT_ADMIN_ROLE"))) {
             sendForbiddenResponse(response);
             return;
         }
-        chain.doFilter(request, response);
+        //Check if path is for services only
+        if(servicePaths.contains(requestURI) && !requesterRole.equals("service")) {
+            sendForbiddenResponse(response);
+            return;
+        }
+
+            chain.doFilter(request, response);
+
     }
 
     private void sendExpiredResponse(ServletResponse response) {

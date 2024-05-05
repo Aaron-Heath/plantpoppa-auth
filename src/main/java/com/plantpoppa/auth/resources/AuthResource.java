@@ -54,7 +54,7 @@ public class AuthResource {
         return authenticator.decodeToken(session.getToken());
     }
 
-    @PostMapping(value = "/validate-token",
+    @PostMapping(value = "/service/validate-token",
     consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> validateToken(@RequestBody JwtBody jwt) {
 
@@ -92,30 +92,22 @@ public class AuthResource {
         }
     }
 
-    @PostMapping(value="/service/validate-secret",
+
+    @PostMapping(value="/service/refresh-token",
     consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<?> validateSecret(@RequestBody InternalClient service) {
-        InternalClient foundService;
-        Map<String, String> response;
-
-        // Try to get valid service based on credentials provided
+    ResponseEntity<?> refreshServiceToken(@RequestBody InternalClient service) {
+        HashMap<String, String> body = new HashMap<>();
         try {
-            foundService = authenticator.validateServiceSecret(service);
+            body = authenticator.refreshServiceToken(service);
+            return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (CredentialException e) {
-            // Catch error thrown by authenticator if bad credentials are provided.
-            response = new HashMap<>();
-            response.put("message",
-                    e.getMessage());
-            return new ResponseEntity<>(response,
-                    HttpStatus.UNAUTHORIZED);
+            body.put("message", e.getMessage());
+            return new ResponseEntity<>(body,HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            body.put("message", "Something went wrong. Please check logs.");
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        String serviceToken = authenticator.createServiceToken(foundService);
-        response = new HashMap<>();
-
-        response.put("jwt",serviceToken);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
