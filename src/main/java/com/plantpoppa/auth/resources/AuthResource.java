@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import javax.security.auth.login.CredentialException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,7 +54,7 @@ public class AuthResource {
         return authenticator.decodeToken(session.getToken());
     }
 
-    @PostMapping(value = "/validate-token",
+    @PostMapping(value = "/service/validate-token",
     consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> validateToken(@RequestBody JwtBody jwt) {
 
@@ -89,6 +89,24 @@ public class AuthResource {
     } catch(Exception e) {
         return new ResponseEntity<String>("Unauthorized",
                 HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+
+    @PostMapping(value="/service/refresh-token",
+    consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> refreshServiceToken(@RequestBody InternalClient service) {
+        HashMap<String, String> body = new HashMap<>();
+        try {
+            body = authenticator.refreshServiceToken(service);
+            return new ResponseEntity<>(body, HttpStatus.OK);
+        } catch (CredentialException e) {
+            body.put("message", e.getMessage());
+            return new ResponseEntity<>(body,HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            body.put("message", "Something went wrong. Please check logs.");
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

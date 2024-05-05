@@ -5,21 +5,21 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.plantpoppa.auth.dao.InternalClientRepository;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
-import com.plantpoppa.auth.models.JwtResponse;
-import com.plantpoppa.auth.models.Session;
-import com.plantpoppa.auth.models.User;
-import com.plantpoppa.auth.models.UserDto;
+import com.plantpoppa.auth.models.*;
 import com.plantpoppa.auth.security.PasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
 
+import javax.security.auth.login.CredentialException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Component
@@ -27,12 +27,14 @@ public class AuthenticationService {
     public final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
+    private final InternalClientRepository clientRepository;
     private final JwtService jwtService;
     private final SecureRandom random = new SecureRandom();
     private final JWTVerifier verifier;
 
     private final String secretKey;
     private final Algorithm algorithm;
+    private static final int secretLength = 32;
 
 
 
@@ -40,10 +42,12 @@ public class AuthenticationService {
     public AuthenticationService(PasswordEncoder passwordEncoder,
                                  UserRepository userRepository,
                                  SessionRepository sessionRepository,
+                                 InternalClientRepository clientRepository,
                                  JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
+        this.clientRepository = clientRepository;
         this.jwtService = jwtService;
         this.secretKey = System.getenv("JWT_SECRET");
         this.algorithm = Algorithm.HMAC256(secretKey);
@@ -73,15 +77,22 @@ public class AuthenticationService {
     }
 
     public String createToken(UserDto userDto) {
-        return jwtService.createToken(userDto);
+        return jwtService.createUserToken(userDto);
     }
 
     public String encryptPassword(String password, byte[] salt) {
         return passwordEncoder.encryptPassword(password, salt);
     }
+
     public byte[] generateSalt() {
         return passwordEncoder.generateSalt();
     }
+
+    public String generateSecret() {
+    byte[] bytes = new byte[secretLength];
+    random.nextBytes(bytes);
+    return Base64.getUrlEncoder().encodeToString(bytes);
+}
 
     public Optional<User> validateBasicCredentials(UserDto userDto) throws Exception {
         User queriedUser;
@@ -173,5 +184,80 @@ public class AuthenticationService {
                 newSalt,
                 storedPassword,
                 storedSalt);
+    }
+
+    // --------- Internal Service Methods --------- \\
+
+    public String createServiceToken(InternalClient service) {return jwtService.createServiceToken(service);}
+
+    /**
+     * @return HashMap with {
+     *     newRefreshToken,
+     *     newJwt
+     * }
+     * */
+    public HashMap<String, String> refreshServiceToken(InternalClient service) throws CredentialException {
+        HashMap<String, String> result = new HashMap<>();
+
+        // Validate credentials provided by the service. Throws an error if invalid.
+        InternalClient foundClient = this.validateServiceSecret(service);
+
+        // If the refresh tokens don't match, throw CredentialException
+        if(!service.getRefreshToken().equals(foundClient.getRefreshToken())) {
+            throw new CredentialException("Invalid Refresh token");
+        }
+
+        // Generate new refresh token and jwt. Store in result
+        String newRefreshToken = this.generateSecret();
+        clientRepository.updateInternalClientRefreshToken(newRefreshToken, foundClient.getServiceId());
+        String newJwt = this.createServiceToken(foundClient);
+
+        result.put("refreshToken", newRefreshToken);
+        result.put("jwt", newJwt);
+
+        return result;
+
+
+
+
+
+
+
+
+
+    }
+
+    /**
+     * Validates internal service credentials. Returns a client if credentials are valid.
+     * Throws a credential exception if they are not.
+     * @param service with String uuid and String secret.
+     * */
+    public InternalClient validateServiceSecret(InternalClient service) throws CredentialException{
+
+        if(service.getUuid().isEmpty()) {
+            throw new CredentialException("Missing service uuid");
+        }
+
+        if(service.getSecret().isEmpty()) {
+            throw new CredentialException("Missing service secret");
+        }
+
+        final String clearSecret = service.getSecret();
+        final Optional<InternalClient> queriedService = clientRepository.fetchOneByUuid(service.getUuid());
+        // If no service found with uuid
+        if(queriedService.isEmpty()) {
+            throw new CredentialException("Invalid uuid provided");
+        }
+
+        final InternalClient foundService = queriedService.get();
+
+        // hash clear secret and compare with queried secret
+        final String hashedSecret = encryptPassword(clearSecret, foundService.getSalt());
+
+        if(!hashedSecret.equals(foundService.getSecret())) {
+            throw new CredentialException("Invalid Secret provided");
+        }
+
+        return foundService;
     }
 }

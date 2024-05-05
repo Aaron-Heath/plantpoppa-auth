@@ -5,10 +5,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.plantpoppa.auth.models.InternalClient;
 import com.plantpoppa.auth.models.UserDto;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.html.Option;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class JwtService {
                 .build();
     }
 
-    public String createToken(UserDto userDto) {
+    public String createUserToken(UserDto userDto) {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
@@ -42,6 +42,25 @@ public class JwtService {
                 .withClaim("role", userDto.getRole())
                 .withClaim("firstName", userDto.getFirstname())
                 .withClaim("lastName", userDto.getLastname())
+                .withIssuedAt(now)
+                .withExpiresAt(expiration)
+                .withIssuer(issuer)
+                .sign(algorithm);
+    }
+
+    public String createServiceToken(InternalClient service) {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        // Application token expires every 6 hours
+        calendar.add(Calendar.HOUR_OF_DAY,6);
+
+        Date expiration = calendar.getTime();
+
+        return JWT.create()
+                .withSubject(service.getTitle())
+                .withClaim("serviceId", service.getUuid())
+                .withClaim("role", "service")
                 .withIssuedAt(now)
                 .withExpiresAt(expiration)
                 .withIssuer(issuer)
