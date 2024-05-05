@@ -54,7 +54,7 @@ public class AuthResource {
         return authenticator.decodeToken(session.getToken());
     }
 
-    @PostMapping(value = "/validate-token",
+    @PostMapping(value = "/service/validate-token",
     consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> validateToken(@RequestBody JwtBody jwt) {
 
@@ -92,31 +92,31 @@ public class AuthResource {
         }
     }
 
-    @PostMapping(value="/service/validate-secret",
-    consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<?> validateSecret(@RequestBody InternalClient service) {
-        InternalClient foundService;
-        Map<String, String> response;
-
-        // Try to get valid service based on credentials provided
-        try {
-            foundService = authenticator.validateServiceSecret(service);
-        } catch (CredentialException e) {
-            // Catch error thrown by authenticator if bad credentials are provided.
-            response = new HashMap<>();
-            response.put("message",
-                    e.getMessage());
-            return new ResponseEntity<>(response,
-                    HttpStatus.UNAUTHORIZED);
-        }
-
-        String serviceToken = authenticator.createServiceToken(foundService);
-        response = new HashMap<>();
-
-        response.put("jwt",serviceToken);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+//    @PostMapping(value="/service/validate-secret",
+//    consumes = MediaType.APPLICATION_JSON_VALUE)
+//    ResponseEntity<?> validateSecret(@RequestBody InternalClient service) {
+//        InternalClient foundService;
+//        Map<String, String> response;
+//
+//        // Try to get valid service based on credentials provided
+//        try {
+//            foundService = authenticator.validateServiceSecret(service);
+//        } catch (CredentialException e) {
+//            // Catch error thrown by authenticator if bad credentials are provided.
+//            response = new HashMap<>();
+//            response.put("message",
+//                    e.getMessage());
+//            return new ResponseEntity<>(response,
+//                    HttpStatus.UNAUTHORIZED);
+//        }
+//
+//        String serviceToken = authenticator.createServiceToken(foundService);
+//        response = new HashMap<>();
+//
+//        response.put("jwt",serviceToken);
+//
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 
     @PostMapping(value="/service/refresh-token",
     consumes = MediaType.APPLICATION_JSON_VALUE)
