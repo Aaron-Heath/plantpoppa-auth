@@ -168,7 +168,6 @@ public class AuthenticationService {
         Optional<User> validatedUser = this.validateBasicCredentials(userDto);
 
         if(validatedUser.isEmpty()) {
-            // FIXME:  Throw appropriate exception when user is not authenticated.
             throw new Exception("User not authenticated");
         }
 
@@ -216,14 +215,6 @@ public class AuthenticationService {
         result.put("jwt", newJwt);
 
         return result;
-
-
-
-
-
-
-
-
 
     }
 
