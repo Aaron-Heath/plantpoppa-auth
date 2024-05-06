@@ -29,7 +29,8 @@ public class JwtFilter implements Filter {
     private final List<String> noAuthPath = List.of(
             "/auth/basic",
             "/api/user/register",
-            "/auth/service/refresh-token"
+            "/auth/service/refresh-token",
+            "/auth/service/authenticate"
     );
 
     private final List<String> servicePaths = List.of(

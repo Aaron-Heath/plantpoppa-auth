@@ -54,6 +54,36 @@ public class AuthResource {
         return authenticator.decodeToken(session.getToken());
     }
 
+    /**
+     * @param service object with uuid and secret as parameters.
+     * @return refresh token and jwt upon response.
+     * */
+    @PostMapping(value="/service/authenticate",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> validateSecret(@RequestBody InternalClient service) {
+        InternalClient foundService;
+        Map<String, String> responseBody = new HashMap<>();
+
+        // Get valid service based on credentials provided
+        try {
+            foundService = authenticator.validateServiceSecret(service);
+        } catch (CredentialException e) {
+            // Catch error thrown by authenticator if bad credentials are provided.
+            responseBody.put("message",
+                    e.getMessage());
+            return new ResponseEntity<>(responseBody,
+                    HttpStatus.UNAUTHORIZED);
+        }
+
+        String jwt = authenticator.createServiceToken(foundService);
+
+        responseBody.put("jwt", jwt);
+        responseBody.put("refreshToken",
+                foundService.getRefreshToken());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/service/validate-token",
     consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> validateToken(@RequestBody JwtBody jwt) {
