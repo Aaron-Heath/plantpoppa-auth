@@ -37,11 +37,11 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Build and Push Docker File
-      run: docker login -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PW}} && docker build --build-arg DB_USER=${{ secrets.PLANTPOPPA_DATASOURCE_USER }} --build-arg DB_PW=${{ secrets.PLANTPOPPA_DATASOURCE_PW }} --build-arg DB_URL=${{ secrets.PLANTPOPPA_DATASOURCE_URL }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg JWT_ISSUER=${{ secrets.JWT_ISSUER }} --build-arg JWT_ADMIN=${{ secrets.JWT_ADMIN_ROLE }} -t ${{ secrets.IMAGE_REGISTRY }}:latest . && docker push ${{secrets.IMAGE_REGISTRY }}:latest
+      run: docker login -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PW}} && docker build --build-arg DB_USER=${{ secrets.PLANTPOPPA_DATASOURCE_USER }} --build-arg DB_PW=${{ secrets.PLANTPOPPA_DATASOURCE_PW }} --build-arg DB_URL=${{ secrets.PLANTPOPPA_DATASOURCE_URL }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg JWT_ISSUER=${{ secrets.JWT_ISSUER }} --build-arg JWT_ADMIN=${{ secrets.JWT_ADMIN_ROLE }} -t ${{ secrets.IMAGE_REGISTRY }}:latest . 
   publish:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Hook Render Deploy
-        run: echo "This is what it will look like when this is deploying."
+        run: docker push ${{secrets.IMAGE_REGISTRY }}:latest
  
