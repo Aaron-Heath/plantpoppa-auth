@@ -28,6 +28,12 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
+      env:
+        PLANTPOPPA_DATASOURCE_URL: ${{ secrets.PLANTPOPPA_DATASOURCE_URL }}
+        PLANTPOPPA_DATASOURCE_USER: ${{ secrets.PLANTPOPPA_DATASOURCE_USER }}
+        PLANTPOPPA_DATASOURCE_PW: ${{ secrets.PLANTPOPPA_DATASOURCE_USER }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
       run: mvn -B package --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
