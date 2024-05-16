@@ -40,6 +40,7 @@ jobs:
 
   Deploy:
     runs-on: ubuntu-latest
+    needs: Build
     steps:
       - name: Hook Render Deploy
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
