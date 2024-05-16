@@ -31,7 +31,7 @@ jobs:
       env:
         PLANTPOPPA_DATASOURCE_URL: ${{ secrets.PLANTPOPPA_DATASOURCE_URL }}
         PLANTPOPPA_DATASOURCE_USER: ${{ secrets.PLANTPOPPA_DATASOURCE_USER }}
-        PLANTPOPPA_DATASOURCE_PW: ${{ secrets.PLANTPOPPA_DATASOURCE_USER }}
+        PLANTPOPPA_DATASOURCE_PW: ${{ secrets.PLANTPOPPA_DATASOURCE_PW }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
       run: mvn -B package --file pom.xml
