@@ -40,4 +40,4 @@ jobs:
     needs: build
     steps:
     - name: Build and Push Docker File
-      run: docker login -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_USER}} && docker build --build-arg DB_USER=${{ secrets.PLANTPOPPA_DATASOURCE_USER }} --build-arg DB_PW=${{ secrets.PLANTPOPPA_DATASOURCE_PW }} --build-arg DB_URL=${{ secrets.PLANTPOPPA_DATASOURCE_URL }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg JWT_ISSUER=${{ secrets.JWT_ISSUER }} --build-arg JWT_ADMIN=${{ secrets.JWT_ADMIN_ROLE }} ${{ secrets.IMAGE_REGISTRY }}:latest .
+      run: docker login -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PW}} && docker build --build-arg DB_USER=${{ secrets.PLANTPOPPA_DATASOURCE_USER }} --build-arg DB_PW=${{ secrets.PLANTPOPPA_DATASOURCE_PW }} --build-arg DB_URL=${{ secrets.PLANTPOPPA_DATASOURCE_URL }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg JWT_ISSUER=${{ secrets.JWT_ISSUER }} --build-arg JWT_ADMIN=${{ secrets.JWT_ADMIN_ROLE }} ${{ secrets.IMAGE_REGISTRY }}:latest .
