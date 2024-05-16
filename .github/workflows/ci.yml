@@ -35,3 +35,4 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
       run: mvn -B package --file pom.xml
+ 

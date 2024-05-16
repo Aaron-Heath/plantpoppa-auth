@@ -1,0 +1,45 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  Build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        env:
+          PLANTPOPPA_DATASOURCE_URL: ${{ secrets.PLANTPOPPA_DATASOURCE_URL }}
+          PLANTPOPPA_DATASOURCE_USER: ${{ secrets.PLANTPOPPA_DATASOURCE_USER }}
+          PLANTPOPPA_DATASOURCE_PW: ${{ secrets.PLANTPOPPA_DATASOURCE_PW }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+        run: mvn -B package --file pom.xml
+
+      - name: Build and Push Docker File
+        run: docker login -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PW}} && docker build --build-arg DB_USER=${{ secrets.PLANTPOPPA_DATASOURCE_USER }} --build-arg DB_PW=${{ secrets.PLANTPOPPA_DATASOURCE_PW }} --build-arg DB_URL=${{ secrets.PLANTPOPPA_DATASOURCE_URL }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg JWT_ISSUER=${{ secrets.JWT_ISSUER }} --build-arg JWT_ADMIN=${{ secrets.JWT_ADMIN_ROLE }} -t ${{ secrets.IMAGE_REGISTRY }}:latest . && docker push ${{secrets.IMAGE_REGISTRY }}:latest
+
+
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hook Render Deploy
+        run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
