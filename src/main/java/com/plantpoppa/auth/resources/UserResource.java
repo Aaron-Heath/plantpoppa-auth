@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -33,6 +34,16 @@ public class UserResource {
     @PostMapping(value="/register",
     consumes=MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
+        // Check for missing required parameters
+        if(
+                userDto.getEmail() == null ||
+                userDto.getPassword() == null ||
+                userDto.getFirstname() == null ||
+                userDto.getLastname() == null
+        ) throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Request missing required fields"
+        );
         Optional<UserDto> createdUser = userService.createUser(userDto);
 
         if(createdUser.isEmpty()) {
