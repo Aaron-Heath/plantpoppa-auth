@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.security.auth.login.CredentialException;
 import java.util.HashMap;
@@ -43,8 +44,10 @@ public class AuthResource {
             return new ResponseEntity<>(authenticationResponse,
                     HttpStatus.OK);
         }
-
-        return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid email or password"
+        );
 
     }
 
