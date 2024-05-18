@@ -1,6 +1,7 @@
 package com.plantpoppa.auth.services;
 
 import com.plantpoppa.auth.dao.UserRepository;
+import com.plantpoppa.auth.exceptions.EmailNotFoundException;
 import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 
@@ -25,6 +26,12 @@ public class UserService {
         this.repository = repository;
         this.credentialSecurityService = credentialSecurityService;
     }
+
+    public User loadByEmail(String email) {
+//        return repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found"));
+        return repository.fetchOneByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found"));
+    }
+
 
     public Optional<UserDto> createUser(UserDto userDto) {
         System.out.println("User service creating new user");

@@ -30,6 +30,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final SecureRandom random = new SecureRandom();
     private final JWTVerifier verifier;
+    private final UserService userService;
 
     private final String secretKey;
     private final Algorithm algorithm;
@@ -40,6 +41,7 @@ public class AuthenticationService {
     @Autowired
     public AuthenticationService(CredentialSecurityService credentialSecurityService,
                                  UserRepository userRepository,
+                                 UserService userService,
                                  SessionRepository sessionRepository,
                                  InternalClientRepository clientRepository,
                                  JwtService jwtService) {
@@ -48,6 +50,7 @@ public class AuthenticationService {
         this.sessionRepository = sessionRepository;
         this.clientRepository = clientRepository;
         this.jwtService = jwtService;
+        this.userService = userService;
         this.secretKey = System.getenv("JWT_SECRET");
         this.algorithm = Algorithm.HMAC256(secretKey);
         this.verifier = JWT.require(algorithm)
@@ -103,8 +106,8 @@ public class AuthenticationService {
 
         // Email only validation
         } else if (userDto.getEmail() != null && userDto.getUuid() == null) {
-            queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
-
+//            queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
+            queriedUser = userService.loadByEmail(userDto.getEmail());
         // Email and UUID validation
         } else if (userDto.getEmail() != null && userDto.getUuid() != null ) {
             queriedUser= userRepository.fetchOneByEmailAndUuid(userDto.getUuid(), userDto.getEmail());
