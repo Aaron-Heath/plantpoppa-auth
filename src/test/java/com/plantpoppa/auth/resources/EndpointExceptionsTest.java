@@ -1,4 +1,4 @@
-package com.plantpoppa.auth.services;
+package com.plantpoppa.auth.resources;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

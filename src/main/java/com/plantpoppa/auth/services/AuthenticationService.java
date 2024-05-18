@@ -9,7 +9,6 @@ import com.plantpoppa.auth.dao.InternalClientRepository;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
 import com.plantpoppa.auth.models.*;
-import com.plantpoppa.auth.security.PasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,7 +23,7 @@ import java.util.Optional;
 
 @Component
 public class AuthenticationService {
-    public final PasswordEncoder passwordEncoder;
+    public final CredentialSecurityService credentialSecurityService;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final InternalClientRepository clientRepository;
@@ -39,12 +38,12 @@ public class AuthenticationService {
 
 
     @Autowired
-    public AuthenticationService(PasswordEncoder passwordEncoder,
+    public AuthenticationService(CredentialSecurityService credentialSecurityService,
                                  UserRepository userRepository,
                                  SessionRepository sessionRepository,
                                  InternalClientRepository clientRepository,
                                  JwtService jwtService) {
-        this.passwordEncoder = passwordEncoder;
+        this.credentialSecurityService = credentialSecurityService;
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.clientRepository = clientRepository;
@@ -81,11 +80,11 @@ public class AuthenticationService {
     }
 
     public String encryptPassword(String password, byte[] salt) {
-        return passwordEncoder.encryptPassword(password, salt);
+        return credentialSecurityService.encryptPassword(password, salt);
     }
 
     public byte[] generateSalt() {
-        return passwordEncoder.generateSalt();
+        return credentialSecurityService.generateSalt();
     }
 
     public String generateSecret() {
@@ -118,7 +117,7 @@ public class AuthenticationService {
         // Return empty if no user found
         if (queriedUser != null) {
             // Encrypt input password with db salt
-            final String encryptedInput = passwordEncoder.encryptPassword(
+            final String encryptedInput = credentialSecurityService.encryptPassword(
                     userDto.getPassword(),
                     queriedUser.getSalt());
             if (encryptedInput.equals(queriedUser.getPw_hash())) {
@@ -172,8 +171,8 @@ public class AuthenticationService {
         }
 
         // Generate new password only if user passed correct credentials
-        byte[] newSalt = passwordEncoder.generateSalt();
-        String encryptedNewPassword = passwordEncoder.encryptPassword(newPassword,
+        byte[] newSalt = credentialSecurityService.generateSalt();
+        String encryptedNewPassword = credentialSecurityService.encryptPassword(newPassword,
                 newSalt);
 
         String storedPassword = validatedUser.get().getPw_hash();
