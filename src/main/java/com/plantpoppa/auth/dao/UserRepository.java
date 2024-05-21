@@ -37,8 +37,11 @@ public interface UserRepository  extends JpaRepository<User, Integer> {
     nativeQuery = true)
     Optional<User> fetchOneByEmail(String email);
 
-//    Optional<User> findByEmail(String email);
-//    Boolean existsByEmail(String email);
+    Optional<User> findByEmail(String email);
+    Boolean existsByEmail(String email);
+
+    Optional<User> findByUuid(String uuid);
+    Boolean existsByUuid(String uuid);
 
     @Query(value="SELECT * FROM user_account WHERE uuid = ?1",
     nativeQuery = true)
