@@ -2,6 +2,7 @@ package com.plantpoppa.auth.services;
 
 import com.plantpoppa.auth.dao.UserRepository;
 import com.plantpoppa.auth.exceptions.EmailNotFoundException;
+import com.plantpoppa.auth.exceptions.UserNotFoundException;
 import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 
@@ -28,8 +29,11 @@ public class UserService {
     }
 
     public User loadByEmail(String email) {
-//        return repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found"));
-        return repository.fetchOneByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found"));
+        return repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found"));
+    }
+
+    public User loadByUuid(String uuid) {
+        return repository.findByUuid(uuid).orElseThrow(() -> new UserNotFoundException("User not found with given uuid"));
     }
 
 

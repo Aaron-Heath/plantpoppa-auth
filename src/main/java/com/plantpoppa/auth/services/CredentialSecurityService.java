@@ -23,6 +23,7 @@ public class CredentialSecurityService {
 
     private final int iterationCount = 65536;
     private final int keyLength = 128;
+    private static final int secretLength = 32;
 
     public CredentialSecurityService() throws NoSuchAlgorithmException {
     }
@@ -52,5 +53,11 @@ public class CredentialSecurityService {
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String generateSecret() {
+        byte[] bytes = new byte[secretLength];
+        random.nextBytes(bytes);
+        return Base64.getUrlEncoder().encodeToString(bytes);
     }
 }
