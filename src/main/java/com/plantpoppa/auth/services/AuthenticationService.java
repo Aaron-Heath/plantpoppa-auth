@@ -61,11 +61,7 @@ public class AuthenticationService {
     public Optional<JwtResponse> basicAuth(UserDto userDto) {
         // Return empty if no user found
         Optional<User> validatedUser;
-        try {
-            validatedUser = this.validateBasicCredentials(userDto);
-        } catch (Exception e) {
-            validatedUser = Optional.empty();
-        }
+        validatedUser = this.validateEmailPassword(userDto);
 
         if (validatedUser.isEmpty()) {
             return Optional.empty();
@@ -95,28 +91,13 @@ public class AuthenticationService {
     random.nextBytes(bytes);
     return Base64.getUrlEncoder().encodeToString(bytes);
 }
+/**
+ * @param userDto must have an email AND a password to be validated.
+ * @return Optional User if user is found AND passwords match. Else returns Optional.empty()
+ * */
+    public Optional<User> validateEmailPassword(UserDto userDto) {
 
-    public Optional<User> validateBasicCredentials(UserDto userDto) throws Exception {
-        User queriedUser;
-
-        // Check for email and/or uuid
-        // UUID only validation
-        if(userDto.getUuid() != null && userDto.getEmail() == null) {
-            queriedUser = userRepository.fetchOneByUuid(userDto.getUuid());
-
-        // Email only validation
-        } else if (userDto.getEmail() != null && userDto.getUuid() == null) {
-//            queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
-            queriedUser = userService.loadByEmail(userDto.getEmail());
-        // Email and UUID validation
-        } else if (userDto.getEmail() != null && userDto.getUuid() != null ) {
-            queriedUser= userRepository.fetchOneByEmailAndUuid(userDto.getUuid(), userDto.getEmail());
-
-        // Exception if neither is provided
-        } else {
-            // Throw exception if neither is provided
-            throw new Exception("Incomplete credentials.");
-        }
+        User queriedUser = userService.loadByEmail(userDto.getEmail());
         // Return empty if no user found
         if (queriedUser != null) {
             // Encrypt input password with db salt
@@ -167,7 +148,7 @@ public class AuthenticationService {
     }
 
     public int updateUserPassword(UserDto userDto, String newPassword) throws Exception {
-        Optional<User> validatedUser = this.validateBasicCredentials(userDto);
+        Optional<User> validatedUser = this.validateEmailPassword(userDto);
 
         if(validatedUser.isEmpty()) {
             throw new Exception("User not authenticated");
