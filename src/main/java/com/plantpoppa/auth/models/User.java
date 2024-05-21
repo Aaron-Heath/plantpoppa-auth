@@ -1,11 +1,14 @@
 package com.plantpoppa.auth.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.UUID;
 
 @Entity
+@Table(name = "user_account")
 public class User {
     private @Id int user_id;
     private String uuid = String.valueOf(UUID.randomUUID());

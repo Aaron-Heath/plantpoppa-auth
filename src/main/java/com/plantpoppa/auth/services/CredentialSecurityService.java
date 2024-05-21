@@ -1,4 +1,4 @@
-package com.plantpoppa.auth.security;
+package com.plantpoppa.auth.services;
 
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ import java.security.spec.KeySpec;
 import java.util.Base64;
 
 @Component
-public class PasswordEncoder {
+public class CredentialSecurityService {
     //    Encodes password + salt hash as a string
     private Base64.Encoder encoder = Base64.getEncoder();
 
@@ -23,8 +23,9 @@ public class PasswordEncoder {
 
     private final int iterationCount = 65536;
     private final int keyLength = 128;
+    private static final int secretLength = 32;
 
-    public PasswordEncoder() throws NoSuchAlgorithmException {
+    public CredentialSecurityService() throws NoSuchAlgorithmException {
     }
     /**
      * This method takes no parameters. It generates a string to be used as a salt for password encryption and storage.
@@ -52,5 +53,11 @@ public class PasswordEncoder {
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String generateSecret() {
+        byte[] bytes = new byte[secretLength];
+        random.nextBytes(bytes);
+        return Base64.getUrlEncoder().encodeToString(bytes);
     }
 }

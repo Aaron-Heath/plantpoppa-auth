@@ -39,6 +39,13 @@ public class AuthResource {
             consumes= MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> basicAuth(@RequestBody UserDto userDto) {
+        // Check email and password are present and not blank. Return 400 if not.
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank() || userDto.getPassword() == null || userDto.getPassword().isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Email and password are required."
+            );
+        }
         Optional<JwtResponse> authenticationResponse = authenticator.basicAuth(userDto);
         if (authenticationResponse.isPresent()) {
             return new ResponseEntity<>(authenticationResponse,
@@ -46,7 +53,7 @@ public class AuthResource {
         }
         throw new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
-                "Invalid email or password"
+                "Invalid credentials"
         );
 
     }

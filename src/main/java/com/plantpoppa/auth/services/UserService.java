@@ -1,6 +1,8 @@
 package com.plantpoppa.auth.services;
 
 import com.plantpoppa.auth.dao.UserRepository;
+import com.plantpoppa.auth.exceptions.EmailNotFoundException;
+import com.plantpoppa.auth.exceptions.UserNotFoundException;
 import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 
@@ -16,19 +18,30 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository;
-    private final AuthenticationService authenticator;
+//    private final AuthenticationService authenticator;
+    private final CredentialSecurityService credentialSecurityService;
 
     @Autowired
-    public UserService(UserRepository repository, AuthenticationService authenticator) {
+    public UserService(UserRepository repository,
+                       CredentialSecurityService credentialSecurityService) {
         this.repository = repository;
-        this.authenticator = authenticator;
+        this.credentialSecurityService = credentialSecurityService;
     }
+
+    public User loadByEmail(String email) {
+        return repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found"));
+    }
+
+    public User loadByUuid(String uuid) {
+        return repository.findByUuid(uuid).orElseThrow(() -> new UserNotFoundException("User not found with given uuid"));
+    }
+
 
     public Optional<UserDto> createUser(UserDto userDto) {
         System.out.println("User service creating new user");
         // Create salt and hashed password
-        byte[] salt = authenticator.generateSalt();
-        String passwordHash = authenticator.encryptPassword(userDto.getPassword(), salt);
+        byte[] salt = credentialSecurityService.generateSalt(); //authenticator.generateSalt();
+        String passwordHash = credentialSecurityService.encryptPassword(userDto.getPassword(), salt);// authenticator.encryptPassword(userDto.getPassword(), salt);
 
         // Convert to user object
         User newUser = new User.UserBuilder()

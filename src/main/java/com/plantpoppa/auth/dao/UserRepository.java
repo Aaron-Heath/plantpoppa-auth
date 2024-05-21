@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public interface UserRepository  extends JpaRepository<User, Integer> {
@@ -34,7 +35,13 @@ public interface UserRepository  extends JpaRepository<User, Integer> {
 
     @Query(value="SELECT * FROM user_account WHERE email = ?1",
     nativeQuery = true)
-    User fetchOneByEmail(String email);
+    Optional<User> fetchOneByEmail(String email);
+
+    Optional<User> findByEmail(String email);
+    Boolean existsByEmail(String email);
+
+    Optional<User> findByUuid(String uuid);
+    Boolean existsByUuid(String uuid);
 
     @Query(value="SELECT * FROM user_account WHERE uuid = ?1",
     nativeQuery = true)
