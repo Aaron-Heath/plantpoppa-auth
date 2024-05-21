@@ -9,7 +9,6 @@ import com.plantpoppa.auth.dao.InternalClientRepository;
 import com.plantpoppa.auth.dao.SessionRepository;
 import com.plantpoppa.auth.dao.UserRepository;
 import com.plantpoppa.auth.models.*;
-import com.plantpoppa.auth.security.PasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,13 +23,14 @@ import java.util.Optional;
 
 @Component
 public class AuthenticationService {
-    public final PasswordEncoder passwordEncoder;
+    public final CredentialSecurityService credentialSecurityService;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final InternalClientRepository clientRepository;
     private final JwtService jwtService;
     private final SecureRandom random = new SecureRandom();
     private final JWTVerifier verifier;
+    private final UserService userService;
 
     private final String secretKey;
     private final Algorithm algorithm;
@@ -39,16 +39,18 @@ public class AuthenticationService {
 
 
     @Autowired
-    public AuthenticationService(PasswordEncoder passwordEncoder,
+    public AuthenticationService(CredentialSecurityService credentialSecurityService,
                                  UserRepository userRepository,
+                                 UserService userService,
                                  SessionRepository sessionRepository,
                                  InternalClientRepository clientRepository,
                                  JwtService jwtService) {
-        this.passwordEncoder = passwordEncoder;
+        this.credentialSecurityService = credentialSecurityService;
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.clientRepository = clientRepository;
         this.jwtService = jwtService;
+        this.userService = userService;
         this.secretKey = System.getenv("JWT_SECRET");
         this.algorithm = Algorithm.HMAC256(secretKey);
         this.verifier = JWT.require(algorithm)
@@ -59,11 +61,7 @@ public class AuthenticationService {
     public Optional<JwtResponse> basicAuth(UserDto userDto) {
         // Return empty if no user found
         Optional<User> validatedUser;
-        try {
-            validatedUser = this.validateBasicCredentials(userDto);
-        } catch (Exception e) {
-            validatedUser = Optional.empty();
-        }
+        validatedUser = this.validateEmailPassword(userDto);
 
         if (validatedUser.isEmpty()) {
             return Optional.empty();
@@ -81,11 +79,11 @@ public class AuthenticationService {
     }
 
     public String encryptPassword(String password, byte[] salt) {
-        return passwordEncoder.encryptPassword(password, salt);
+        return credentialSecurityService.encryptPassword(password, salt);
     }
 
     public byte[] generateSalt() {
-        return passwordEncoder.generateSalt();
+        return credentialSecurityService.generateSalt();
     }
 
     public String generateSecret() {
@@ -93,36 +91,22 @@ public class AuthenticationService {
     random.nextBytes(bytes);
     return Base64.getUrlEncoder().encodeToString(bytes);
 }
+/**
+ * @param userDto must have an email AND a password to be validated.
+ * @return Optional User if user is found AND passwords match. Else returns Optional.empty()
+ * */
+    public Optional<User> validateEmailPassword(UserDto userDto) {
 
-    public Optional<User> validateBasicCredentials(UserDto userDto) throws Exception {
-        User queriedUser;
-
-        // Check for email and/or uuid
-        // UUID only validation
-        if(userDto.getUuid() != null && userDto.getEmail() == null) {
-            queriedUser = userRepository.fetchOneByUuid(userDto.getUuid());
-
-        // Email only validation
-        } else if (userDto.getEmail() != null && userDto.getUuid() == null) {
-            queriedUser = userRepository.fetchOneByEmail(userDto.getEmail());
-
-        // Email and UUID validation
-        } else if (userDto.getEmail() != null && userDto.getUuid() != null ) {
-            queriedUser= userRepository.fetchOneByEmailAndUuid(userDto.getUuid(), userDto.getEmail());
-
-        // Exception if neither is provided
-        } else {
-            // Throw exception if neither is provided
-            throw new Exception("Incomplete credentials.");
-        }
+        Optional<User> queriedUser = userService.loadByEmail(userDto.getEmail());
         // Return empty if no user found
-        if (queriedUser != null) {
+        if (queriedUser.isPresent()) {
+            User foundUser = queriedUser.get();
             // Encrypt input password with db salt
-            final String encryptedInput = passwordEncoder.encryptPassword(
+            final String encryptedInput = credentialSecurityService.encryptPassword(
                     userDto.getPassword(),
-                    queriedUser.getSalt());
-            if (encryptedInput.equals(queriedUser.getPw_hash())) {
-                return Optional.of(queriedUser);
+                    foundUser.getSalt());
+            if (encryptedInput.equals(foundUser.getPw_hash())) {
+                return Optional.of(foundUser);
             }
         }
         return Optional.empty();
@@ -165,15 +149,15 @@ public class AuthenticationService {
     }
 
     public int updateUserPassword(UserDto userDto, String newPassword) throws Exception {
-        Optional<User> validatedUser = this.validateBasicCredentials(userDto);
+        Optional<User> validatedUser = this.validateEmailPassword(userDto);
 
         if(validatedUser.isEmpty()) {
             throw new Exception("User not authenticated");
         }
 
         // Generate new password only if user passed correct credentials
-        byte[] newSalt = passwordEncoder.generateSalt();
-        String encryptedNewPassword = passwordEncoder.encryptPassword(newPassword,
+        byte[] newSalt = credentialSecurityService.generateSalt();
+        String encryptedNewPassword = credentialSecurityService.encryptPassword(newPassword,
                 newSalt);
 
         String storedPassword = validatedUser.get().getPw_hash();

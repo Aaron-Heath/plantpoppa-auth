@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.swing.text.html.Option;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class JwtFilter implements Filter {
                          ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)  request;
+        HttpServletResponse res = (HttpServletResponse) response;
 
         // Skip filter if path does not require authentication
         if(noAuthPath.contains(req.getRequestURI())) {
@@ -92,7 +94,6 @@ public class JwtFilter implements Filter {
         // Check if path is for admins and user is admin
         if(adminPaths.contains(requestURI) && !requesterRole.equals(System.getenv("JWT_ADMIN_ROLE"))) {
             sendForbiddenResponse(response);
-            return;
         }
         //Check if path is for services only
         if(servicePaths.contains(requestURI) && !requesterRole.equals("service")) {
@@ -120,15 +121,25 @@ public class JwtFilter implements Filter {
 
     private void sendForbiddenResponse(ServletResponse response) {
         HttpServletResponse res = (HttpServletResponse) response;
-
-        res.setStatus(HttpStatus.FORBIDDEN.value());
-        res.setContentType(MediaType.TEXT_HTML_VALUE);
+        final String message = "Not authorized to access this resource";
 
         try {
-            res.sendError(403,"NOT AUTHORIZED TO ACCESS THIS RESOURCE");
+            res.sendError(HttpServletResponse.SC_FORBIDDEN,message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    private void sendForbiddenResponse(ServletResponse response, String message) {
+        HttpServletResponse res = (HttpServletResponse) response;
+
+        try {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN,message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void sendUnauthorizedResponse(ServletResponse response) {

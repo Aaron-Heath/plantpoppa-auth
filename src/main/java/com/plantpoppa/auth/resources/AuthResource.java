@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.security.auth.login.CredentialException;
 import java.util.HashMap;
@@ -38,13 +39,22 @@ public class AuthResource {
             consumes= MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> basicAuth(@RequestBody UserDto userDto) {
+        // Check email and password are present and not blank. Return 400 if not.
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank() || userDto.getPassword() == null || userDto.getPassword().isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Email and password are required"
+            );
+        }
         Optional<JwtResponse> authenticationResponse = authenticator.basicAuth(userDto);
         if (authenticationResponse.isPresent()) {
             return new ResponseEntity<>(authenticationResponse,
                     HttpStatus.OK);
         }
-
-        return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid email or password"
+        );
 
     }
 
@@ -89,16 +99,16 @@ public class AuthResource {
     ResponseEntity<?> validateToken(@RequestBody JwtBody jwt) {
 
         Optional<User> validatedUser = authenticator.validateTokenProvideUser(jwt.getJwt());
-
-        HttpStatus status = validatedUser.isPresent() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
-
+        HttpStatus status;
         HashMap<String, String> responseBody = new HashMap<>();
 
         if(validatedUser.isPresent()) {
             User user = validatedUser.get();
+            status = HttpStatus.OK;
             responseBody.put("uuid", user.getUuid());
             responseBody.put("userId", String.valueOf(user.getUser_id()));
         } else {
+            status = HttpStatus.UNAUTHORIZED;
             responseBody.put("Message", "Invalid Token");
         }
 
