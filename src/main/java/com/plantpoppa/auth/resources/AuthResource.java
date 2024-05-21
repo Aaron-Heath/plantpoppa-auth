@@ -99,16 +99,16 @@ public class AuthResource {
     ResponseEntity<?> validateToken(@RequestBody JwtBody jwt) {
 
         Optional<User> validatedUser = authenticator.validateTokenProvideUser(jwt.getJwt());
-
-        HttpStatus status = validatedUser.isPresent() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
-
+        HttpStatus status;
         HashMap<String, String> responseBody = new HashMap<>();
 
         if(validatedUser.isPresent()) {
             User user = validatedUser.get();
+            status = HttpStatus.OK;
             responseBody.put("uuid", user.getUuid());
             responseBody.put("userId", String.valueOf(user.getUser_id()));
         } else {
+            status = HttpStatus.UNAUTHORIZED;
             responseBody.put("Message", "Invalid Token");
         }
 
