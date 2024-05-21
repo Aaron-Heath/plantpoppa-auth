@@ -47,7 +47,7 @@ public class EndpointExceptionsTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"user1@email.com, password", "john.doe@example.com, pass", " , ", "user1@gmail.com, ", " , password"})
+    @CsvSource({"user1@email.com, password", "john.doe@example.com, pass"})
     public void basicAuth_BadCredentials_ReturnsUnauthorized(String email, String password) {
         HashMap<String, String> loginRequest = new HashMap<>();
         loginRequest.put("email", email);
@@ -66,6 +66,34 @@ public class EndpointExceptionsTest {
                     .content(body))
                     .andExpect(status().isUnauthorized())
                     .andExpect(result -> Assertions.assertEquals("401 UNAUTHORIZED \"Invalid email or password\"", result.getResolvedException().getMessage()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({" , ", "user1@gmail.com, ", " , password"})
+    public void basicAuth_MissingCredentials_ReturnsBadRequest(String email, String password) {
+        HashMap<String, String> loginRequest = new HashMap<>();
+        loginRequest.put("email", email);
+        loginRequest.put("password", password);
+
+        String body;
+        try {
+            body = objectWriter.writeValueAsString(loginRequest);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            mvc.perform(post("/auth/basic")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result -> Assertions.assertEquals("400 BAD_REQUEST \"Email and password are required\"", result.getResolvedException().getMessage()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

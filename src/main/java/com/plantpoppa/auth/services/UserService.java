@@ -28,12 +28,12 @@ public class UserService {
         this.credentialSecurityService = credentialSecurityService;
     }
 
-    public User loadByEmail(String email) {
-        return repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found"));
+    public Optional<User> loadByEmail(String email) {
+        return repository.findByEmail(email);
     }
 
-    public User loadByUuid(String uuid) {
-        return repository.findByUuid(uuid).orElseThrow(() -> new UserNotFoundException("User not found with given uuid"));
+    public Optional<User> loadByUuid(String uuid) {
+        return repository.findByUuid(uuid);
     }
 
 

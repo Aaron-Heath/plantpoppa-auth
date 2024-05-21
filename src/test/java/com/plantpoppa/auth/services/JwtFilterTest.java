@@ -4,6 +4,7 @@ import com.plantpoppa.auth.filters.JwtFilter;
 import com.plantpoppa.auth.models.User;
 import com.plantpoppa.auth.models.UserDto;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,17 +60,20 @@ public class JwtFilterTest {
     @Test
     public void apiUserFilter_NoJwt_ReturnUnauthorized() throws ServletException, IOException {
 
-        final String expected = "401 UNAUTHORIZED \"Authorization header missing\"";
 
         req.setRequestURI("/api/user");
 
-        Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
-            jwtFilter.doFilter(req, res, chain);
-        });
 
-        final String actual = exception.getMessage();
+        jwtFilter.doFilter(req, res, chain);
 
-        Assertions.assertEquals(expected, actual);
+        int actualStatus = res.getStatus();
+        int expectedState = 401;
+
+        final String expectedMessage = "MISSING OR MALFORMED AUTHORIZATION HEADER";
+        final String actualMessage = res.getErrorMessage();
+
+        Assertions.assertEquals(expectedState, actualStatus);
+        Assertions.assertEquals(expectedMessage, actualMessage);
 
     }
 

@@ -43,7 +43,7 @@ public class AuthResource {
         if (userDto.getEmail() == null || userDto.getEmail().isBlank() || userDto.getPassword() == null || userDto.getPassword().isBlank()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Email and password are required."
+                    "Email and password are required"
             );
         }
         Optional<JwtResponse> authenticationResponse = authenticator.basicAuth(userDto);
@@ -53,7 +53,7 @@ public class AuthResource {
         }
         throw new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
-                "Invalid credentials"
+                "Invalid email or password"
         );
 
     }

@@ -97,15 +97,16 @@ public class AuthenticationService {
  * */
     public Optional<User> validateEmailPassword(UserDto userDto) {
 
-        User queriedUser = userService.loadByEmail(userDto.getEmail());
+        Optional<User> queriedUser = userService.loadByEmail(userDto.getEmail());
         // Return empty if no user found
-        if (queriedUser != null) {
+        if (queriedUser.isPresent()) {
+            User foundUser = queriedUser.get();
             // Encrypt input password with db salt
             final String encryptedInput = credentialSecurityService.encryptPassword(
                     userDto.getPassword(),
-                    queriedUser.getSalt());
-            if (encryptedInput.equals(queriedUser.getPw_hash())) {
-                return Optional.of(queriedUser);
+                    foundUser.getSalt());
+            if (encryptedInput.equals(foundUser.getPw_hash())) {
+                return Optional.of(foundUser);
             }
         }
         return Optional.empty();
