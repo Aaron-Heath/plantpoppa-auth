@@ -29,5 +29,6 @@ ENV JWT_ADMIN_ROLE=$JWT_ADMIN
 ARG JAR_FILE=target/auth-0.0.1-SNAPSHOT.jar
 ADD ${JAR_FILE} app.jar
 ADD application.properties application.properties
+ADD application-prod.properties application-prod.properties
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
