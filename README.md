@@ -1,4 +1,6 @@
-# PlantPoppa Authorization
+# PlantPoppa Authorization - READ ONLY
+This service has been conslidated into the [plantpoppa-plant repository](https://github.com/Aaron-Heath/plantpoppa-plant). Please navigate there to see continued updates.
+
 ## Description
 This is a work-in-progress service that forms the centralized authentication and authorization layer from the PlantPoppa Application, ensuring secure user access management and data protection.
 
